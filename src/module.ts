@@ -1,7 +1,11 @@
 import { defineNuxtModule, addPlugin, createResolver, installModule } from '@nuxt/kit'
 
 // Module options TypeScript interface definition
-export interface ModuleOptions {}
+export interface ModuleOptions {
+  apiGenerator: {
+    disable: boolean
+  }
+}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -9,10 +13,16 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'ntFeaturesPack',
   },
   // Default configuration options of the Nuxt module
-  defaults: {},
+  defaults: {
+    apiGenerator: {
+      disable: false,
+    }
+  },
   async setup(_options, _nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
-    await installModule(resolve('./runtime/modules/api_generator/index.ts'))
+    if(!_options.apiGenerator.disable) {
+      await installModule(resolve('./runtime/modules/api_generator/index.ts'))
+    }
   },
 })

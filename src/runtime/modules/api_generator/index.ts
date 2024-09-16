@@ -1,7 +1,7 @@
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { rimrafSync } from 'rimraf'
-import { defineNuxtModule, createResolver, addImports, useNuxt  } from '@nuxt/kit'
+import { defineNuxtModule, addImports, useNuxt  } from '@nuxt/kit'
 import { composableApiTemplate } from './api.templates.ts'
 
 export default defineNuxtModule({
@@ -19,10 +19,10 @@ export default defineNuxtModule({
       rimrafSync(composableApiFileOutput)
       writeFileSync(composableApiFileOutput, composableApiTemplate(), { encoding: 'utf-8' })
 
-      // addImports({
-      //   name: 'api',
-      //   from: resolver.resolve('../../../', rootDir, 'client/index.ts')
-      // })
+      addImports({
+        name: 'api',
+        from: resolve(rootDir, 'client/index.ts')
+      })
     } catch (error) {
       console.error(error)
     }

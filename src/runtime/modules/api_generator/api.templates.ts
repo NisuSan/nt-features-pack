@@ -2,19 +2,40 @@
 
 import { parse } from 'node:path'
 import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import fg from 'fast-glob'
 import { ExportAssignment, Project, SyntaxKind, type ArrowFunction } from 'ts-morph'
+import { gray, greenBright, redBright, yellowBright, blueBright } from 'ansis'
+import { useNuxt } from '@nuxt/kit'
 
 const tsProject = new Project({ tsConfigFilePath: 'tsconfig.json' })
 
 type CustomApiTypes = {
+  file: string,
   args: string
   result: string
 }
 
-export function composableApiTemplate(options: { includeFiles?: string[] } = {}) {
-  const customApis = fg.sync(options.includeFiles || ['server/api/**/*.ts', '!server/api/**/index.ts'], { dot: true })
+type Options = {
+  includeFiles: string[]
+}
+
+const defaultOptions: Options = {
+  includeFiles: [],
+}
+
+export function composableApiTemplate(options: Options = defaultOptions) {
+  const serverDir = resolve(useNuxt().options.buildDir, '..', 'server').replace(/\\/g, '/')
+
+  const customApis = fg.sync(options.includeFiles.length > 0 ? options.includeFiles : [`${serverDir}/api/**/*.ts`, `!${serverDir}/api/**/index.ts`], { dot: true })
   const customTypes = customApis.map(x => extractCustomApiTypes(x))
+
+  if(customApis.length == 0) {
+    log('No APIs found', 'default')
+  }
+  else {
+    console.log(log(`Processing ${customApis.length} APIs`, 'default'));
+  }
 
   let compiledInputTypes = customTypes.map(x => x.args).join(':')
   compiledInputTypes = compiledInputTypes + (compiledInputTypes ? ': never' : 'undefined')
@@ -73,12 +94,12 @@ function extractCustomApiTypes(file: string): CustomApiTypes {
   const matchArgs = content.match(/type\s?QueryArgs\s?=\s?({[^}]*}|[^{;\n]+)/)
   const argsType = matchArgs ? matchArgs[1].replaceAll('\r\n', '').replaceAll('{', '{ ').replaceAll('}', ' }').replaceAll(/ +/g, ' ') : '{}'
 
-  // const matchResult = content.match(/type Result\s?=\s?Promise<({?[^}]+}?)\s?\|/)
-  const resultType = getResultTypeFromAPI(file) || '{}' // matchResult ? matchResult[1]: '{}'
+  const resultType = getResultTypeFromAPI(file) || '{}'
   const parsed = parse(file)
   const group = parsed.dir.split('/').reverse()[0]
 
   return {
+    file,
     args: `T extends "${group}.${parsed.name}" ? ${argsType}`,
     result: `T extends "${group}.${parsed.name}" ? ${resultType}`
   }
@@ -106,4 +127,15 @@ function getResultTypeFromAPI(file: string): string | undefined {
 
 function capitalize(word: string) {
   return word?.split(' ').map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(' ')
+}
+
+function log(text: string, kind: 'default' | 'success' | 'error' | 'warning') {
+  const kindToColor = {
+    default: gray,
+    success: greenBright,
+    error: redBright,
+    warning: yellowBright
+  }
+
+  console.log(kindToColor[kind](`  ${blueBright`[ApiGenerator]`}: ${text}\n`))
 }
