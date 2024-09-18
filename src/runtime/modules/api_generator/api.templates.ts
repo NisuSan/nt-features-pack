@@ -20,22 +20,13 @@ type Options = {
   includeFiles: string[]
 }
 
-const defaultOptions: Options = {
-  includeFiles: [],
-}
-
-export function composableApiTemplate(options: Options = defaultOptions) {
+export function composableApiTemplate(options: Options) {
   const serverDir = resolve(useNuxt().options.buildDir, '..', 'server').replace(/\\/g, '/')
 
-  const customApis = fg.sync(options.includeFiles.length > 0 ? options.includeFiles : [`${serverDir}/api/**/*.ts`, `!${serverDir}/api/**/index.ts`], { dot: true })
+  const customApis = fg.sync(options.includeFiles.map(x => x.replace('<serverDir>', serverDir)), { dot: true })
   const customTypes = customApis.map(x => extractCustomApiTypes(x))
 
-  if(customApis.length == 0) {
-    log('No APIs found', 'default')
-  }
-  else {
-    console.log(log(`Processing ${customApis.length} APIs`, 'default'));
-  }
+  log(customApis.length == 0 ? 'No APIs found' : `Processing ${customApis.length} APIs`, 'default')
 
   let compiledInputTypes = customTypes.map(x => x.args).join(':')
   compiledInputTypes = compiledInputTypes + (compiledInputTypes ? ': never' : 'undefined')

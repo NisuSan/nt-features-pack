@@ -106,3 +106,89 @@ export const themeMixins = `
   }
 }
 `
+
+export const themeNaiveUi = `
+@include themed('', 'light') {
+  background-color: theme('colors.light-background') !important;
+  color: theme('colors.light-text') !important;
+}
+
+@include themed('', 'dark') {
+  background-color: theme('colors.dark-background') !important;
+  color: theme('colors.dark-text') !important;
+}
+
+@include themed('.n-button.n-button--tertiary-type', 'light') {
+  .n-button__border {
+    border: 1px solid #E0E0E0 !important;
+  }
+
+  .n-button__state-border {
+    border: none !important;
+  }
+
+  &:not(.n-button--disabled):hover {
+    background: #E0E0E0 !important;
+    .n-button__state-border {
+      border: none !important;
+    }
+  }
+}
+
+@include themed('.n-button.n-button--tertiary-type .n-button__border', 'dark') {
+  border: 1px solid transparent !important;
+}
+
+@include themed('.n-base-selection:not(.n-base-selection--disabled) .n-base-selection-label, .n-input:not(.n-input--disabled)', 'dark') {
+  background-color: theme('colors.dark-input-background') !important;
+}
+
+@include themed('.n-base-selection:not(.n-base-selection--disabled) .n-base-selection-placeholder, .n-input:not(.n-input--disabled) .n-input__placeholder', 'dark') {
+  color: theme('colors.dark-card-text') !important;
+}
+
+@include themed('.n-card', 'light') {
+  box-shadow: theme('boxShadow.harder') !important;
+}
+
+.n-collapse-item__header--active .n-collapse-item__header-main {
+  font-weight: 500 !important;
+
+  @include light() {
+    color: theme('colors.light-main-brand') !important;
+  }
+
+  @include dark() {
+    color: theme('colors.dark-light-accent') !important;
+  }
+}
+
+.n-base-selection.n-base-selection--disabled {
+  border: none !important;
+
+  * {
+    border: none !important;
+  }
+}
+
+$buttons: ('default': 'main-brand', 'primary': 'main-brand', 'info': 'info', 'success': 'success', 'warning': 'warning', 'error': 'danger');
+@each $t in ('light', 'dark') {
+  @each $btn, $n in $buttons {
+    [theme=#{$t}] .n-button.n-button--#{$btn}-type.n-button--dashed:active {
+      color: theme('colors.#{$t}-#{$n}-hover') !important;
+      background-color: if($t == 'light', rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05)) !important;
+
+      .n-button__state-border {
+        border-width: 1px !important;
+      }
+    }
+  }
+}
+`
+
+export const themeVanillaCss = ``
+
+export const tailwindFileContent = `
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";`

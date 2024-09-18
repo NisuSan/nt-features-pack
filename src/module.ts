@@ -1,15 +1,18 @@
 import { defineNuxtModule, addPlugin, createResolver, installModule, extendPages } from '@nuxt/kit'
-import { defu } from 'defu'
 import { type ModuleOptions as TailwindModuleOptions } from '@nuxtjs/tailwindcss'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
   apiGenerator: {
-    disable?: boolean
+    disable?: boolean,
+    includeFiles?: string[]
   },
   themeGenerator: {
     disable?: boolean,
-    target: 'naive-ui' | 'css'
+    target?: 'naive-ui' | 'css',
+    location?: 'internal' | 'external',
+    scssMixins?: [string[], 'apppend' | 'replace'],
+    themeCss?: [string[], 'apppend' | 'replace'],
   },
   tailwind?: {
     internal: boolean,
@@ -28,10 +31,14 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     apiGenerator: {
       disable: false,
+      includeFiles: [`<serverDir>/api/**/*.ts`, `!<serverDir>/api/**/index.ts`]
     },
     themeGenerator: {
       disable: false,
+      location: 'internal',
       target: 'naive-ui',
+      scssMixins: [[], 'apppend'],
+      themeCss: [[], 'apppend'],
     },
     tailwind: {
       internal: true,
@@ -46,7 +53,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup(_options, _nuxt) {
     if(!_options.apiGenerator.disable) {
-      await installModule(resolve('./runtime/modules/api_generator/index.ts'))
+      await installModule(resolve('./runtime/modules/api_generator/index.ts'), _options.apiGenerator)
     }
 
     if(!_options.themeGenerator.disable) {
@@ -58,7 +65,7 @@ export default defineNuxtModule<ModuleOptions>({
         })
       })
 
-      await installModule(resolve('./runtime/modules/theme_generator/index.ts'))
+      await installModule(resolve('./runtime/modules/theme_generator/index.ts'), _options.themeGenerator)
     }
 
     if(_options.tailwind?.internal) {
