@@ -57,6 +57,8 @@ export default defineNuxtModule<ModuleOptions>({
           file: resolve('./runtime/pages/themes.vue'),
         })
       })
+
+      await installModule(resolve('./runtime/modules/theme_generator/index.ts'))
     }
 
     if(_options.tailwind?.internal) {

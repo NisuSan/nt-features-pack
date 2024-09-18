@@ -5,8 +5,8 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import fg from 'fast-glob'
 import { ExportAssignment, Project, SyntaxKind, type ArrowFunction } from 'ts-morph'
-import { gray, greenBright, redBright, yellowBright, blueBright } from 'ansis'
 import { useNuxt } from '@nuxt/kit'
+import { capitalize, log } from '../../utils/index.ts'
 
 const tsProject = new Project({ tsConfigFilePath: 'tsconfig.json' })
 
@@ -123,19 +123,4 @@ function getResultTypeFromAPI(file: string): string | undefined {
     .filter(x => x.getName() === 'finally')
     .map(x => x.getTypeAtLocation(arrowFunctionSourceFile).getCallSignatures()[0].getReturnType().getTypeArguments()[0].getText())[0]
     .replaceAll(';', ',')
-}
-
-function capitalize(word: string) {
-  return word?.split(' ').map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(' ')
-}
-
-function log(text: string, kind: 'default' | 'success' | 'error' | 'warning') {
-  const kindToColor = {
-    default: gray,
-    success: greenBright,
-    error: redBright,
-    warning: yellowBright
-  }
-
-  console.log(kindToColor[kind](`  ${blueBright`[ApiGenerator]`}: ${text}\n`))
 }
