@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import { useAppColors } from '../composables/index.ts'
 
 const defaultFonts= ['ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Helvetica Neue', 'Arial', '"Noto Sans"', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"']
 
@@ -11,6 +12,7 @@ export default <Partial<Config>> {
       center: true,
     },
     extend: {
+      colors: useAppColors(),
       fontFamily: {
         logo: ['Rubik', ...defaultFonts]
       },
@@ -21,3 +23,5 @@ export default <Partial<Config>> {
     }
   }
 }
+
+

@@ -44,6 +44,8 @@
     "@nuxtjs/google-fonts": "^3.2.0",
     "@nuxtjs/tailwindcss": "^6.12.1",
     "@types/node": "latest",
+    "@vueuse/core": "^11.1.0",
+    "@vueuse/nuxt": "^11.1.0",
     "changelogen": "^0.5.5",
     "cross-env": "^7.0.3",
     "eslint": "^9.10.0",

@@ -76,6 +76,28 @@ export function composableApiTemplate(options: Options) {
         ${apiFunctions}
       }
     }
+
+    export function useExtendedFetch<T>(
+      url: string,
+      method: string = 'get',
+      params?: Ref<APIParams<T>> | APIParams<T>,
+      options?: Omit<UseFetchOptions<APIOutput<T>>, 'default' | 'query' | 'body' | 'params'> & { default?: () => APIOutput<T> | Ref<APIOutput<T>>, withCache?: boolean | number }
+    ) {
+      const isHasArray = Object.values(unref(params) || {}).some(value => Array.isArray(value))
+      // @ts-expect-error
+      return useFetch<APIOutput<T>>(url, {
+        method,
+        [['get', 'delete'].includes(method) ? 'query' : 'body']: isHasArray
+          ? Object.fromEntries(Object.entries(unref(params) || {}).map(([k, v]) => [Array.isArray(v) ? \`\${k}[]\` : k, toRaw(v)]))
+          : params,
+        lazy: true,
+        getCachedData: options?.withCache === true ? (key, nuxtApp) => {
+          return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+        } : undefined,
+        default: () => [],
+        ...options }
+      )  as AsyncData<APIOutput<T>, Error>
+    }
   `
 }
 
