@@ -1,4 +1,4 @@
-import { defineNuxtModule, addPlugin, createResolver, installModule, extendPages, addImportsDir, addTypeTemplate } from '@nuxt/kit'
+import { defineNuxtModule, addPlugin, createResolver, installModule, extendPages, addImportsDir, addTypeTemplate, addImports } from '@nuxt/kit'
 import { type ModuleOptions as TailwindModuleOptions } from '@nuxtjs/tailwindcss'
 
 // Module options TypeScript interface definition
@@ -73,5 +73,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     await installModule('@vueuse/nuxt')
+
+    addImportsDir(resolve('./runtime/composables'))
   },
 })
