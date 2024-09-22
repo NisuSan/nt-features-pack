@@ -1,5 +1,7 @@
 import { defineNuxtModule, addPlugin, createResolver, installModule, extendPages, addImportsDir, addTypeTemplate, addImports } from '@nuxt/kit'
+import { type ComputedRef } from 'vue'
 import { type ModuleOptions as TailwindModuleOptions } from '@nuxtjs/tailwindcss'
+import { naiveUiOverrides } from './runtime/modules/theme_generator/theme.templates.ts'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
@@ -13,6 +15,7 @@ export interface ModuleOptions {
     location?: 'internal' | 'external',
     scssMixins?: [string[], 'apppend' | 'replace'],
     themeCss?: [string[], 'apppend' | 'replace'],
+    themeCode?: (appColors: AppColors, themeName: ComputedRef<string>) => ComputedRef<unknown>,
   },
   tailwind?: {
     internal: boolean,
@@ -39,6 +42,7 @@ export default defineNuxtModule<ModuleOptions>({
       target: 'naive-ui',
       scssMixins: [[], 'apppend'],
       themeCss: [[], 'apppend'],
+      themeCode: naiveUiOverrides
     },
     tailwind: {
       internal: true,
@@ -73,7 +77,6 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     await installModule('@vueuse/nuxt')
-
     addImportsDir(resolve('./runtime/composables'))
   },
 })

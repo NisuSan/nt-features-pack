@@ -51,7 +51,6 @@ export function composableApiTemplate(options: Options) {
         }
       `,
     }
-  // @ts-expect-error
   }).reduce((r, a) => ({ ...r, [a.group]: [...r[a.group] || [], a.method] }), {}))
   .map(([k, v]) => k == 'api' ? (v as string[]).join(',') : `
     ${k}: {

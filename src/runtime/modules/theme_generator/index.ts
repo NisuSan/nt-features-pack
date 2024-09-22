@@ -1,7 +1,7 @@
 import { resolve } from 'node:path'
 import { readFileSync } from 'node:fs'
 import { defineNuxtModule } from '@nuxt/kit'
-import { defaultColorShema, themeMixins, themeNaiveUi, themeVanillaCss, tailwindFileContent, injectColorsToTailwind, createTypeForAppColors } from './theme.templates.ts'
+import { defaultColorShema, themeMixins, themeNaiveUi, themeVanillaCss, tailwindFileContent, injectColorsToTailwind, createTypeForAppColors, generateColorChosers } from './theme.templates.ts'
 import { createFile } from '../../utils/index.ts'
 
 export interface ModuleOptions {
@@ -33,6 +33,8 @@ export default defineNuxtModule<ModuleOptions>({
 
       const content = tailwindFileContent + ['mixins', 'styles'].map(x => `\n@include "${rootDir}/theme.${x}.scss";`).join('')
       createFile(resolve('./src/runtime/tailwindcss/tailwind.css'), content)
+
+      generateColorChosers()
     } catch (error) {
       console.error(error)
     }
