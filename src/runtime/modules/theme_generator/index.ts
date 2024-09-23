@@ -1,7 +1,8 @@
 import { resolve } from 'node:path'
 import { readFileSync } from 'node:fs'
-import { defineNuxtModule } from '@nuxt/kit'
-import { defaultColorShema, themeMixins, themeNaiveUi, themeVanillaCss, tailwindFileContent, injectColorsToTailwind, createTypeForAppColors, generateColorChosers } from './theme.templates.ts'
+import { defineNuxtModule, addPlugin } from '@nuxt/kit'
+import { type ComputedRef } from 'vue'
+import { defaultColorShema, themeMixins, themeNaiveUi, themeVanillaCss, tailwindFileContent, injectColorsToTailwind, createTypeForAppColors, generateColorChosers, generateUseThemeCodeComposable } from './theme.templates.ts'
 import { createFile } from '../../utils/index.ts'
 
 export interface ModuleOptions {
@@ -9,6 +10,7 @@ export interface ModuleOptions {
   target: 'naive-ui' | 'css',
   scssMixins: [string[], 'apppend' | 'replace'],
   themeCss: [string[], 'apppend' | 'replace'],
+  themeCode?: `${string} => ${string}`,
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -35,6 +37,7 @@ export default defineNuxtModule<ModuleOptions>({
       createFile(resolve('./src/runtime/tailwindcss/tailwind.css'), content)
 
       generateColorChosers()
+      generateUseThemeCodeComposable(_options.themeCode)
     } catch (error) {
       console.error(error)
     }

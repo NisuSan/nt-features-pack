@@ -1,4 +1,4 @@
-import { defineNuxtModule, addPlugin, createResolver, installModule, extendPages, addImportsDir, addTypeTemplate, addImports } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, installModule, extendPages, addImportsDir } from '@nuxt/kit'
 import { type ComputedRef } from 'vue'
 import { type ModuleOptions as TailwindModuleOptions } from '@nuxtjs/tailwindcss'
 import { naiveUiOverrides } from './runtime/modules/theme_generator/theme.templates.ts'
@@ -15,7 +15,7 @@ export interface ModuleOptions {
     location?: 'internal' | 'external',
     scssMixins?: [string[], 'apppend' | 'replace'],
     themeCss?: [string[], 'apppend' | 'replace'],
-    themeCode?: (appColors: AppColors, themeName: ComputedRef<string>) => ComputedRef<unknown>,
+    themeCode?: `${string} => ${string}`  //(appColors: Record<string, string>, themeName: ComputedRef<string>) => ComputedRef<unknown>,
   },
   tailwind?: {
     internal: boolean,
@@ -42,7 +42,7 @@ export default defineNuxtModule<ModuleOptions>({
       target: 'naive-ui',
       scssMixins: [[], 'apppend'],
       themeCss: [[], 'apppend'],
-      themeCode: naiveUiOverrides
+      themeCode: '../src/runtime/modules/theme_generator/theme.templates.ts => naiveUiOverrides'
     },
     tailwind: {
       internal: true,

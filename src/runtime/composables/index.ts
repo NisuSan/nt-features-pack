@@ -7,3 +7,7 @@ export function useTheme() {
 export function useAppColors() {
   return twConfig.default.theme?.extend?.colors as AppColors
 }
+
+export function useTestDuplicate() {
+  console.log('test')
+}
