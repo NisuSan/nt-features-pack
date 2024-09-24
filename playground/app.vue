@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-  useTestDuplicate()
+  console.log(useRuntimeConfig().public.themeGenerator)
 </script>

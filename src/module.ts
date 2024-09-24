@@ -1,7 +1,19 @@
 import { defineNuxtModule, createResolver, installModule, extendPages, addImportsDir } from '@nuxt/kit'
-import { type ComputedRef } from 'vue'
 import { type ModuleOptions as TailwindModuleOptions } from '@nuxtjs/tailwindcss'
-import { naiveUiOverrides } from './runtime/modules/theme_generator/theme.templates.ts'
+import { type ComputedRef, computed } from 'vue'
+import { type GlobalThemeOverrides } from 'naive-ui'
+import { naiveUiOverrides } from './runtime/modules/theme_generator/source/naiveUiOverrides.ts'
+
+type ThemeGeneratorBase = {
+  disable?: boolean,
+  location?: 'internal' | 'external',
+  scssMixins?: [string[], 'apppend' | 'replace'],
+  themeCss?: [string[], 'apppend' | 'replace'],
+}
+
+export type ThemeGeneratorOptions =
+  | ThemeGeneratorBase & { target?: 'naive-ui', themeCode?: ((AppColors: Record<string, string>, themeName: ComputedRef<string>) => ComputedRef<GlobalThemeOverrides>) | GlobalThemeOverrides }
+  | ThemeGeneratorBase & { target?: 'css', themeCode?: (AppColors: Record<string, string>, themeName: ComputedRef<string>) => ComputedRef<unknown> }
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
@@ -9,14 +21,7 @@ export interface ModuleOptions {
     disable?: boolean,
     includeFiles?: string[]
   },
-  themeGenerator: {
-    disable?: boolean,
-    target?: 'naive-ui' | 'css',
-    location?: 'internal' | 'external',
-    scssMixins?: [string[], 'apppend' | 'replace'],
-    themeCss?: [string[], 'apppend' | 'replace'],
-    themeCode?: `${string} => ${string}`  //(appColors: Record<string, string>, themeName: ComputedRef<string>) => ComputedRef<unknown>,
-  },
+  themeGenerator: ThemeGeneratorOptions,
   tailwind?: {
     internal: boolean,
     config?: TailwindModuleOptions
@@ -42,7 +47,7 @@ export default defineNuxtModule<ModuleOptions>({
       target: 'naive-ui',
       scssMixins: [[], 'apppend'],
       themeCss: [[], 'apppend'],
-      themeCode: '../src/runtime/modules/theme_generator/theme.templates.ts => naiveUiOverrides'
+      themeCode: naiveUiOverrides()
     },
     tailwind: {
       internal: true,
