@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-  console.log(useRuntimeConfig().public.themeGenerator)
+
 </script>

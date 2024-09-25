@@ -11,5 +11,5 @@
 </template>
 
 <script settup lang="ts">
-  // const mainColors =
+import { useNuxtApp } from 'nuxt/app';
 </script>
