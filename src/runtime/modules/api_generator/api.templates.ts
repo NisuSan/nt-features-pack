@@ -4,7 +4,6 @@ import { parse } from 'node:path'
 import { readFileSync } from 'node:fs'
 import fg from 'fast-glob'
 import { ExportAssignment, Project, SyntaxKind, type ArrowFunction } from 'ts-morph'
-import { useNuxt } from '@nuxt/kit'
 import { capitalize, log, resolveBuild } from '../../utils/index.ts'
 
 const tsProject = new Project({ tsConfigFilePath: 'tsconfig.json' })
@@ -20,7 +19,7 @@ type Options = {
 }
 
 export function composableApiTemplate(options: Options) {
-  const serverDir = resolveBuild('../../server', 'root')
+  const serverDir = resolveBuild('server')
 
   const customApis = fg.sync(options.includeFiles.map(x => x.replace('<serverDir>', serverDir)), { dot: true })
   const customTypes = customApis.map(x => extractCustomApiTypes(x))
@@ -50,7 +49,7 @@ export function composableApiTemplate(options: Options) {
         }
       `,
     }
-  // @ts-expect-error
+  // @ts-ignore
   }).reduce((r, a) => ({ ...r, [a.group]: [...r[a.group] || [], a.method] }), {}))
   .map(([k, v]) => k == 'api' ? (v as string[]).join(',') : `
     ${k}: {
