@@ -1,8 +1,6 @@
-import { defineNuxtModule, createResolver, installModule, extendPages, addImportsDir } from '@nuxt/kit'
+import { defineNuxtModule, installModule, extendPages, addImportsDir, useNuxt } from '@nuxt/kit'
 import { type ModuleOptions as TailwindModuleOptions } from '@nuxtjs/tailwindcss'
-import { type ComputedRef, computed } from 'vue'
-import { type GlobalThemeOverrides } from 'naive-ui'
-import { naiveUiOverrides } from './runtime/modules/theme_generator/source/naiveUiOverrides.ts'
+import { resolve, resolveBuild } from './runtime/utils/index.ts'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
@@ -16,7 +14,7 @@ export interface ModuleOptions {
     location?: 'internal' | 'external',
     scssMixins?: [string[], 'apppend' | 'replace'],
     themeCss?: [string[], 'apppend' | 'replace'],
-    themeCode?: `${string} => ${string}` //(AppColors: Record<string, string>, themeName: ComputedRef<string>) => ComputedRef<unknown>
+    themeCode?: `${string} => ${string}`
   },
   tailwind?: {
     internal: boolean,
@@ -24,14 +22,11 @@ export interface ModuleOptions {
   }
 }
 
-const { resolve } = createResolver(import.meta.url)
-
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'nt-features-pack',
     configKey: 'ntFeaturesPack',
   },
-  // Default configuration options of the Nuxt module
   defaults: {
     apiGenerator: {
       disable: false,
@@ -43,7 +38,7 @@ export default defineNuxtModule<ModuleOptions>({
       target: 'naive-ui',
       scssMixins: [[], 'apppend'],
       themeCss: [[], 'apppend'],
-      themeCode: `./src/runtime/modules/theme_generator/source/naiveUiOverrides.ts => naiveUiOverrides`
+      themeCode: `${resolve('./runtime/modules/theme_generator/source/naiveUiOverrides.ts')} => naiveUiOverrides`
     },
     tailwind: {
       internal: true,
@@ -57,9 +52,9 @@ export default defineNuxtModule<ModuleOptions>({
     }
   },
   async setup(_options, _nuxt) {
-    if(!_options.apiGenerator.disable) {
-      await installModule(resolve('./runtime/modules/api_generator/index.ts'), _options.apiGenerator)
-    }
+    // if(!_options.apiGenerator.disable) {
+    //   await installModule(resolve('./runtime/modules/api_generator/index.ts'), _options.apiGenerator)
+    // } commended for more perfomance in another module
 
     if(!_options.themeGenerator.disable) {
       extendPages(pages => {

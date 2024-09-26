@@ -2,11 +2,10 @@
 
 import { parse } from 'node:path'
 import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
 import fg from 'fast-glob'
 import { ExportAssignment, Project, SyntaxKind, type ArrowFunction } from 'ts-morph'
 import { useNuxt } from '@nuxt/kit'
-import { capitalize, log } from '../../utils/index.ts'
+import { capitalize, log, resolveBuild } from '../../utils/index.ts'
 
 const tsProject = new Project({ tsConfigFilePath: 'tsconfig.json' })
 
@@ -21,7 +20,7 @@ type Options = {
 }
 
 export function composableApiTemplate(options: Options) {
-  const serverDir = resolve(useNuxt().options.buildDir, '..', 'server').replace(/\\/g, '/')
+  const serverDir = resolveBuild('../../server', 'root')
 
   const customApis = fg.sync(options.includeFiles.map(x => x.replace('<serverDir>', serverDir)), { dot: true })
   const customTypes = customApis.map(x => extractCustomApiTypes(x))

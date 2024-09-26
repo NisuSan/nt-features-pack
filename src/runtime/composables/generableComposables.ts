@@ -1,6 +1,8 @@
-export {}
-    declare global {
-      type AppColors = {'light-background': string,
+
+    import * as twConfig from '../tailwindcss/tailwind.config.ts'
+    import {type ComputedRef } from 'vue'
+
+    type AppColors = {'light-background': string,
 'light-card-background': string,
 'light-input-background': string,
 'light-text': string,
@@ -54,5 +56,17 @@ export {}
 'dark-disabled-border': string,
 'dark-placeholder': string,
 'dark-placeholder-disabled': string}
+
+    export function useAppColors(): AppColors {
+      return twConfig.default.theme?.extend?.colors as AppColors
+    }
+
+    export function useColorChosers(themeName: ComputedRef<string>) {
+      // @ts-ignore
+      return (light: string, dark: string): string => ({light, dark}[themeName.value])
+    }
+
+    export function useThemeNames() {
+      return ["light","dark"] as const
     }
   
