@@ -1,7 +1,7 @@
 import { useAppColors, useThemeNames } from './generableComposables.ts'
 import { useColorMode, useDark, useToggle } from '@vueuse/core'
-import { useNuxtApp } from 'nuxt/app'
 import { computed } from 'vue'
+import { __useThemeCode } from './themeComposables.ts'
 
 export function useTheme() {
   const appColors = useAppColors() as Record<string, string>
@@ -14,7 +14,7 @@ export function useTheme() {
   const nextThemeName = computed(() => isDark.value ? 'light' : 'dark')
   const setTheme = (theme: typeof possibleThemes[number]) => themeName.value = theme
 
-  // const themeUI = useNuxtApp().$
+  const themeUI = __useThemeCode(appColors, computed(() => themeName.value))
 
-  return { toggleTheme, setTheme, themeName, nextThemeName }
+  return { toggleTheme, setTheme, themeName, nextThemeName, themeUI }
 }

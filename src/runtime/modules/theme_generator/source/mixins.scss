@@ -8,7 +8,7 @@
       str-split(str-slice($string, $i + str-length($separator)), $separator)
     );
   }
-  @return $string
+  @return $string;
 }
 
 @mixin themed($selector: '', $theme: null) {

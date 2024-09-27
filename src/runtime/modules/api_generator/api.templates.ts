@@ -4,7 +4,7 @@ import { parse } from 'node:path'
 import { readFileSync } from 'node:fs'
 import fg from 'fast-glob'
 import { ExportAssignment, Project, SyntaxKind, type ArrowFunction } from 'ts-morph'
-import { capitalize, log, resolveBuild } from '../../utils/index.ts'
+import { capitalize, log, resolve } from '../../utils/index.ts'
 
 const tsProject = new Project({ tsConfigFilePath: 'tsconfig.json' })
 
@@ -19,7 +19,7 @@ type Options = {
 }
 
 export function composableApiTemplate(options: Options) {
-  const serverDir = resolveBuild('server')
+  const serverDir = resolve('server')
 
   const customApis = fg.sync(options.includeFiles.map(x => x.replace('<serverDir>', serverDir)), { dot: true })
   const customTypes = customApis.map(x => extractCustomApiTypes(x))

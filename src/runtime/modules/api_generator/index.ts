@@ -1,6 +1,6 @@
 import { defineNuxtModule, addImports } from '@nuxt/kit'
 import { composableApiTemplate } from './api.templates.ts'
-import { createFile, resolveBuild } from '../../utils/index.ts'
+import { createFile, resolve } from '../../utils/index.ts'
 
 export interface ModuleOptions {
   includeFiles: string[]
@@ -13,7 +13,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   setup(_options, _nuxt) {
     try {
-      const file = resolveBuild('client/composables/api.ts')
+      const file = resolve('client/composables/api.ts', 'build')
 
       createFile(file, composableApiTemplate(_options))
       addImports({ name: 'api', from: file })

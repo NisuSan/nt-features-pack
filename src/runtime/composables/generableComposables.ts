@@ -61,7 +61,7 @@
       return twConfig.default.theme?.extend?.colors as AppColors
     }
 
-    export function useColorChosers(themeName: ComputedRef<string>) {
+    export function useColorChooser(themeName: ComputedRef<string>) {
       // @ts-ignore
       return (light: string, dark: string): string => ({light, dark}[themeName.value])
     }
