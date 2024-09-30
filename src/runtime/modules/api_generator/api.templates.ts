@@ -4,7 +4,7 @@ import { parse } from 'node:path'
 import { readFileSync } from 'node:fs'
 import fg from 'fast-glob'
 import { ExportAssignment, Project, SyntaxKind, type ArrowFunction } from 'ts-morph'
-import { capitalize, getRuntimeApiDir, log, resolve } from '../../utils/index.ts'
+import { capitalize, getRuntimeApiDir, getUrlRouteFromFile, log, resolve } from '../../utils/index.ts'
 
 const tsProject = new Project({ tsConfigFilePath: 'tsconfig.json' })
 
@@ -16,7 +16,8 @@ type CustomApiTypes = {
 
 type Options = {
   includeFiles: string[],
-  isThemeGeneratorActive: boolean
+  isThemeGeneratorActive: boolean,
+  functionName: string
 }
 
 export function composableApiTemplate(options: Options) {
@@ -42,12 +43,15 @@ export function composableApiTemplate(options: Options) {
     const group = parsed.dir.split('/').reverse()[0]
     const parts = parsed.name.split('.')
     const fnName = parts[1] ? `${parts[1]}${capitalize(parts[0])}` : parts[0]
+    const route = getUrlRouteFromFile(x)
 
     return {
       group,
       method: `
+        // @ts-expect-error
         ${fnName}<T = '${group}.${parsed.name}'>(params?: Ref<APIParams<T>> | APIParams<T>, options?: Omit<UseFetchOptions<APIOutput<T>>, 'default' | 'query' | 'body' | 'params'> & { default?: () => APIOutput<T> | Ref<APIOutput<T>>, withCache?: boolean | number }) {
-          return useExtendedFetch<APIOutput<T>>(\`/${parse(x).dir.split('/').slice(1).join('/')}/${parts[0]}\`, '${parts[1]}', params, options) as AsyncData<APIOutput<T>, Error>
+          // @ts-expect-error
+          return useExtendedFetch<APIOutput<T>>(\`${route}\`, '${parts[1] || 'get'}', params, options) as AsyncData<APIOutput<T>, Error>
         }
       `,
     }
@@ -60,18 +64,12 @@ export function composableApiTemplate(options: Options) {
   `)
 
   return `
-    /*
-      Please note that the accompanying TypeScript file has been automatically generated and, therefore, any manual modifications may result in unexpected behavior.
-      We strongly advise against making any edits to this file by hand, as it may lead to unintended consequences and potential errors.
-      Thank you for your understanding and cooperation in this matter.
-    */
-
-    import type { AsyncData, UseFetchOptions } from '#app'
+    import {type Ref, unref, toRaw } from 'vue'
     export type Endpoint = ${definedManualRoutes};
     export type APIParams<T> = ${compiledInputTypes};
     export type APIOutput<T> = ${compiledOutputTypes};
 
-    export function api() {
+    export function ${options.functionName}() {
       return {
         ${apiFunctions}
       }
@@ -81,6 +79,7 @@ export function composableApiTemplate(options: Options) {
       url: string,
       method: string = 'get',
       params?: Ref<APIParams<T>> | APIParams<T>,
+      // @ts-expect-error
       options?: Omit<UseFetchOptions<APIOutput<T>>, 'default' | 'query' | 'body' | 'params'> & { default?: () => APIOutput<T> | Ref<APIOutput<T>>, withCache?: boolean | number }
     ) {
       const isHasArray = Object.values(unref(params) || {}).some(value => Array.isArray(value))
@@ -96,6 +95,7 @@ export function composableApiTemplate(options: Options) {
         } : undefined,
         default: () => [],
         ...options }
+      // @ts-expect-error
       )  as AsyncData<APIOutput<T>, Error>
     }
   `

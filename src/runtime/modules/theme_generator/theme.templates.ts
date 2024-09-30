@@ -2,7 +2,7 @@ import { addServerHandler, useNuxt } from '@nuxt/kit'
 import fg from 'fast-glob'
 import { existsSync } from 'node:fs'
 import { ObjectLiteralExpression, Project, SyntaxKind } from 'ts-morph'
-import { createFile, getRuntimeApiDir, resolve } from '../../utils/index.ts'
+import { createFile, getRuntimeApiDir, getUrlRouteFromFile, resolve } from '../../utils/index.ts'
 
 export const defaultColorShema = {
   'light-background': '#F3F1F2',
@@ -124,9 +124,6 @@ export function themeComposableGenerator(functionLike: `${string} => ${string}`)
 export function generateRuntimeApiRoutes() {
   const moduleThemeApi = fg.sync([getRuntimeApiDir()], { dot: true })
   for (const apiPath of moduleThemeApi) {
-    addServerHandler({
-      route: '/' + apiPath.match(/\/server\/(.*)\/[^\/]+$/)?.[1],
-      handler: apiPath
-    })
+    addServerHandler({ route: getUrlRouteFromFile(apiPath), handler: apiPath })
   }
 }

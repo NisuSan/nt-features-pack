@@ -4,7 +4,8 @@ import { createFile, resolve } from '../../utils/index.ts'
 
 export interface ModuleOptions {
   includeFiles: string[],
-  isThemeGeneratorActive: boolean
+  isThemeGeneratorActive: boolean,
+  functionName: string
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -14,10 +15,10 @@ export default defineNuxtModule<ModuleOptions>({
   },
   setup(_options, _nuxt) {
     try {
-      const file = resolve('client/composables/api.ts', 'build')
+      const file = resolve('../../composables/apiComposables.ts')
 
       createFile(file, composableApiTemplate(_options))
-      addImports({ name: 'api', from: file })
+      addImports({ name: _options.functionName, from: file })
     } catch (error) {
       console.error(error)
     }

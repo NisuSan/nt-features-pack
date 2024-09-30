@@ -73,3 +73,8 @@ export function getCallerDist() {
 export function getRuntimeApiDir() {
   return pathResolve(useNuxt().options.rootDir, '../src/runtime/server/api/**/*.ts').replace(/\\/g, '/')
 }
+
+export function getUrlRouteFromFile(file: string) {
+  const parsed = file.match(/\/server(.*?\/)([^\/]+?)(?:\.\w+)+$/)!
+  return parsed[1] + (parsed[2] === 'index' ? '' : parsed[2])
+}

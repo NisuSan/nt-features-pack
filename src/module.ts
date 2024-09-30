@@ -5,7 +5,8 @@ import { resolve } from './runtime/utils/index.ts'
 export interface ModuleOptions {
   apiGenerator: {
     disable?: boolean,
-    includeFiles?: string[]
+    includeFiles?: string[],
+    functionName: string
   },
   themeGenerator: {
     disable?: boolean,
@@ -29,7 +30,8 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     apiGenerator: {
       disable: false,
-      includeFiles: [`<serverDir>/api/**/*.ts`, `!<serverDir>/api/**/index.ts`]
+      includeFiles: [`<serverDir>/api/**/*.ts`, `!<serverDir>/api/**/index.ts`],
+      functionName: 'api'
     },
     themeGenerator: {
       disable: false,

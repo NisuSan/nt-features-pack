@@ -11,5 +11,8 @@
 </template>
 
 <script settup lang="ts">
+  import { api } from '../composables/apiComposables'
+
+  console.log(await api().theme.getIndex())
 
 </script>
