@@ -24,8 +24,6 @@
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
     "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
     "lint": "eslint .",
-    "test": "vitest run",
-    "test:watch": "vitest watch",
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "dependencies": {
@@ -44,6 +42,7 @@
     "@nuxtjs/google-fonts": "^3.2.0",
     "@nuxtjs/tailwindcss": "^6.12.1",
     "@types/node": "latest",
+    "@vue/test-utils": "^2.4.6",
     "@vueuse/core": "^11.1.0",
     "@vueuse/nuxt": "^11.1.0",
     "changelogen": "^0.5.5",
@@ -51,6 +50,7 @@
     "eslint": "^9.10.0",
     "naive-ui": "^2.39.0",
     "nuxt": "^3.13.2",
+    "playwright-core": "^1.47.2",
     "sass": "^1.79.3",
     "tailwindcss": "^3.4.12",
     "typescript": "latest",

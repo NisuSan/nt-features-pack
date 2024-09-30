@@ -4,7 +4,7 @@ import { parse } from 'node:path'
 import { readFileSync } from 'node:fs'
 import fg from 'fast-glob'
 import { ExportAssignment, Project, SyntaxKind, type ArrowFunction } from 'ts-morph'
-import { capitalize, log, resolve } from '../../utils/index.ts'
+import { capitalize, getRuntimeApiDir, log, resolve } from '../../utils/index.ts'
 
 const tsProject = new Project({ tsConfigFilePath: 'tsconfig.json' })
 
@@ -15,13 +15,15 @@ type CustomApiTypes = {
 }
 
 type Options = {
-  includeFiles: string[]
+  includeFiles: string[],
+  isThemeGeneratorActive: boolean
 }
 
 export function composableApiTemplate(options: Options) {
   const serverDir = resolve('server')
+  const dirsForParse = [...options.includeFiles, process.env.NODE_ENV === 'development' && options.isThemeGeneratorActive ? getRuntimeApiDir() : []].flat()
 
-  const customApis = fg.sync(options.includeFiles.map(x => x.replace('<serverDir>', serverDir)), { dot: true })
+  const customApis = fg.sync(dirsForParse.map(x => x.replace('<serverDir>', serverDir)), { dot: true })
   const customTypes = customApis.map(x => extractCustomApiTypes(x))
 
   log(customApis.length == 0 ? 'No APIs found' : `Processing ${customApis.length} APIs`, 'default')

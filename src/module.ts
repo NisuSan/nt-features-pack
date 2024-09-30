@@ -1,4 +1,4 @@
-import { defineNuxtModule, installModule, extendPages, addImportsDir, useNuxt } from '@nuxt/kit'
+import { defineNuxtModule, installModule, extendPages, addImportsDir } from '@nuxt/kit'
 import { type ModuleOptions as TailwindModuleOptions } from '@nuxtjs/tailwindcss'
 import { resolve } from './runtime/utils/index.ts'
 
@@ -52,7 +52,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup(_options, _nuxt) {
     if(!_options.apiGenerator.disable) {
-      installModule(resolve('./runtime/modules/api_generator/index.ts'), _options.apiGenerator).then(x => {})
+      installModule(resolve('./runtime/modules/api_generator/index.ts'), {..._options.apiGenerator, isThemeGeneratorActive: !_options.themeGenerator.disable}).then(x => {})
     }
 
     if(!_options.themeGenerator.disable) {

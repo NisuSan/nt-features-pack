@@ -3,7 +3,8 @@ import { composableApiTemplate } from './api.templates.ts'
 import { createFile, resolve } from '../../utils/index.ts'
 
 export interface ModuleOptions {
-  includeFiles: string[]
+  includeFiles: string[],
+  isThemeGeneratorActive: boolean
 }
 
 export default defineNuxtModule<ModuleOptions>({

@@ -13,7 +13,7 @@ export function createFile(path: string, content: string) {
 }
 
 export function capitalize(word: string) {
-  return word?.split(' ').map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(' ')
+  return word?.toLowerCase().split(' ').map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(' ')
 }
 
 export function log(text: string, kind: 'default' | 'success' | 'error' | 'warning') {
@@ -49,7 +49,7 @@ export function resolve(...paths: [...string[], 'build' | 'server' | string]): s
   return pathResolve(isAbs ? paths[0] : literalToPath, ...(isAbs ? p.slice(1) : p)).replace(/\\/g, '/')
 }
 
-function getCallerDist() {
+export function getCallerDist() {
   const originalFunc = Error.prepareStackTrace
   let callerFile: string | undefined
 
@@ -68,4 +68,8 @@ function getCallerDist() {
   }
 
   return callerFile ? dirname(pathResolve(callerFile).replace(/\\/g, '/')) : ''
+}
+
+export function getRuntimeApiDir() {
+  return pathResolve(useNuxt().options.rootDir, '../src/runtime/server/api/**/*.ts').replace(/\\/g, '/')
 }
