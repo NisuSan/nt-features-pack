@@ -16,9 +16,12 @@ export default defineNuxtModule<ModuleOptions>({
   setup(_options, _nuxt) {
     try {
       const file = resolve('../../composables/apiComposables.ts')
+      const content = composableApiTemplate(_options)
 
-      createFile(file, composableApiTemplate(_options))
-      addImports({ name: _options.functionName, from: file })
+      if(content) {
+        createFile(file, content)
+        addImports({ name: _options.functionName, from: file })
+      }
     } catch (error) {
       console.error(error)
     }

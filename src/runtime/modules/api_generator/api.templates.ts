@@ -28,6 +28,7 @@ export function composableApiTemplate(options: Options) {
   const customTypes = customApis.map(x => extractCustomApiTypes(x))
 
   log(customApis.length == 0 ? 'No APIs found' : `Processing ${customApis.length} APIs`, 'default')
+  if(customApis.length == 0) return
 
   let compiledInputTypes = customTypes.map(x => x.args).join(':')
   compiledInputTypes = compiledInputTypes + (compiledInputTypes ? ': never' : 'undefined')
@@ -42,13 +43,14 @@ export function composableApiTemplate(options: Options) {
     const parsed = parse(x)
     const group = parsed.dir.split('/').reverse()[0]
     const parts = parsed.name.split('.')
-    const fnName = parts[1] ? `${parts[1]}${capitalize(parts[0])}` : parts[0]
+
+    const n = parts[0] === 'index' ? 'data' : parts[0]
+    const fnName = parts[1] ? `${parts[1]}${capitalize(n)}` : n
     const route = getUrlRouteFromFile(x)
 
     return {
       group,
       method: `
-        // @ts-expect-error
         ${fnName}<T = '${group}.${parsed.name}'>(params?: Ref<APIParams<T>> | APIParams<T>, options?: Omit<UseFetchOptions<APIOutput<T>>, 'default' | 'query' | 'body' | 'params'> & { default?: () => APIOutput<T> | Ref<APIOutput<T>>, withCache?: boolean | number }) {
           // @ts-expect-error
           return useExtendedFetch<APIOutput<T>>(\`${route}\`, '${parts[1] || 'get'}', params, options) as AsyncData<APIOutput<T>, Error>
@@ -64,6 +66,7 @@ export function composableApiTemplate(options: Options) {
   `)
 
   return `
+    import { useFetch, type AsyncData, type UseFetchOptions } from 'nuxt/app'
     import {type Ref, unref, toRaw } from 'vue'
     export type Endpoint = ${definedManualRoutes};
     export type APIParams<T> = ${compiledInputTypes};
@@ -79,7 +82,6 @@ export function composableApiTemplate(options: Options) {
       url: string,
       method: string = 'get',
       params?: Ref<APIParams<T>> | APIParams<T>,
-      // @ts-expect-error
       options?: Omit<UseFetchOptions<APIOutput<T>>, 'default' | 'query' | 'body' | 'params'> & { default?: () => APIOutput<T> | Ref<APIOutput<T>>, withCache?: boolean | number }
     ) {
       const isHasArray = Object.values(unref(params) || {}).some(value => Array.isArray(value))
@@ -90,12 +92,11 @@ export function composableApiTemplate(options: Options) {
           ? Object.fromEntries(Object.entries(unref(params) || {}).map(([k, v]) => [Array.isArray(v) ? \`\${k}[]\` : k, toRaw(v)]))
           : params,
         lazy: true,
-        getCachedData: options?.withCache === true ? (key, nuxtApp) => {
+        getCachedData: options?.withCache === true ? (key: string | number, nuxtApp: { payload: { data: { [x: string]: any; }; }; static: { data: { [x: string]: any; }; }; }) => {
           return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
         } : undefined,
         default: () => [],
         ...options }
-      // @ts-expect-error
       )  as AsyncData<APIOutput<T>, Error>
     }
   `

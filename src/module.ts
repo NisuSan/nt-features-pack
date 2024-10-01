@@ -11,10 +11,10 @@ export interface ModuleOptions {
   themeGenerator: {
     disable?: boolean,
     target?: 'naive-ui' | 'css',
-    location?: 'internal' | 'external',
+    location?: string,
     scssMixins?: [string[], 'apppend' | 'replace'],
     themeCss?: [string[], 'apppend' | 'replace'],
-    themeCode?: `${string} => ${string}`
+    themeCode?: [string, string]
   },
   tailwind?: {
     internal: boolean,
@@ -35,11 +35,11 @@ export default defineNuxtModule<ModuleOptions>({
     },
     themeGenerator: {
       disable: false,
-      location: 'internal',
+      location: './theme',
       target: 'naive-ui',
       scssMixins: [[], 'apppend'],
       themeCss: [[], 'apppend'],
-      themeCode: `${resolve('./runtime/modules/theme_generator/source/naiveUiOverrides.ts')} => naiveUiOverrides`
+      themeCode: [resolve('./runtime/modules/theme_generator/source/naiveUiOverrides.ts'), 'naiveUiOverrides']
     },
     tailwind: {
       internal: true,
