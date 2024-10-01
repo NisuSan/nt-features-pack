@@ -37,6 +37,7 @@
       options?: Omit<UseFetchOptions<APIOutput<T>>, 'default' | 'query' | 'body' | 'params'> & { default?: () => APIOutput<T> | Ref<APIOutput<T>>, withCache?: boolean | number }
     ) {
       const isHasArray = Object.values(unref(params) || {}).some(value => Array.isArray(value))
+      // @ts-expect-error
       return useFetch<APIOutput<T>>(url, {
         method,
         [['get', 'delete'].includes(method) ? 'query' : 'body']: isHasArray

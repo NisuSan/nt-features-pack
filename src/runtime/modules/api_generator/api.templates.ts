@@ -4,7 +4,8 @@ import { parse } from 'node:path'
 import { readFileSync } from 'node:fs'
 import fg from 'fast-glob'
 import { ExportAssignment, Project, SyntaxKind, type ArrowFunction } from 'ts-morph'
-import { capitalize, getRuntimeApiDir, getUrlRouteFromFile, log, resolve } from '../../utils/index.ts'
+import { getRuntimeApiDir, getUrlRouteFromFile, log, resolve } from '../../utils/index.ts'
+import { capitalize } from '../../utils/pure.ts'
 
 const tsProject = new Project({ tsConfigFilePath: 'tsconfig.json' })
 

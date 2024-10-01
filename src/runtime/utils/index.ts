@@ -12,10 +12,6 @@ export function createFile(path: string, content: string) {
   writeFileSync(path, content, { encoding: 'utf-8' })
 }
 
-export function capitalize(word: string) {
-  return word?.toLowerCase().split(' ').map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(' ')
-}
-
 export function log(text: string, kind: 'default' | 'success' | 'error' | 'warning') {
   const kindToColor = {
     default: gray,
