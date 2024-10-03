@@ -45,6 +45,11 @@ export function naiveUiOverrides(appColors: Record<string, string>, themeName: C
       opacityDisabled: '0.5',
       boxShadow1: '0 1px 2px rgba(0, 0, 0, .08)',
       boxShadow2: '0 3px 6px rgba(0, 0, 0, .12)',
+      scrollbarColor: appColors[`${themeName.value}-border`],
+      scrollbarColorHover: appColors[`${themeName.value}-border`],
+      scrollbarColorTrack: appColors[`${themeName.value}-border`],
+      scrollbarColorTrackHover: appColors[`${themeName.value}-border`],
+      scrollbarColorThumb: appColors[`${themeName.value}-border`],
     },
     Button: {
       ...Object.fromEntries(['textColorPrimary', 'textColorInfo', 'textColorSuccess', 'textColorWarning', 'textColorError'].map(buttonColorMap)),
@@ -92,6 +97,7 @@ export function naiveUiOverrides(appColors: Record<string, string>, themeName: C
     Tabs: {
       tabFontWeightActive: '500',
       tabTextColorLine: appColors[`${themeName.value}-text`], //themeName.value == 'light' ? appColors['light-text'] : appColors[`dark-card-text`]
+      tabTextColorBar: appColors[`${themeName.value}-text`], //themeName.value == 'light' ? appColors['light-text'] : appColors[`dark-card-text`]
     },
   }))
 }

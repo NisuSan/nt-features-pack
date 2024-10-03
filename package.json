@@ -34,7 +34,7 @@
     "ts-morph": "^23.0.0"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^1.4.2",
+    "@nuxt/devtools": "^1.5.2",
     "@nuxt/eslint-config": "^0.5.7",
     "@nuxt/module-builder": "^0.8.4",
     "@nuxt/schema": "^3.13.2",
@@ -44,17 +44,17 @@
     "@types/node": "latest",
     "@vueuse/core": "^11.1.0",
     "@vueuse/nuxt": "^11.1.0",
-    "changelogen": "^0.5.5",
+    "changelogen": "^0.5.7",
     "cross-env": "^7.0.3",
-    "eslint": "^9.10.0",
-    "naive-ui": "^2.39.0",
+    "eslint": "^9.11.1",
+    "naive-ui": "^2.40.1",
     "nuxt": "^3.13.2",
-    "sass": "^1.79.3",
+    "sass": "^1.79.4",
     "sass-embedded": "^1.79.4",
-    "tailwindcss": "^3.4.12",
+    "tailwindcss": "^3.4.13",
     "typescript": "latest",
     "unplugin-vue-components": "^0.27.4",
-    "vitest": "^2.1.1",
+    "vitest": "^2.1.2",
     "vue-tsc": "^2.1.6"
   },
   "packageManager": "pnpm@9.10.0+sha512.73a29afa36a0d092ece5271de5177ecbf8318d454ecd701343131b8ebc0c1a91c487da46ab77c8e596d6acf1461e3594ced4becedf8921b074fbd8653ed7051c"

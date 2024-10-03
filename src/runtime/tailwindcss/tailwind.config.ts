@@ -23,7 +23,8 @@ export default <Partial<Config>> {
   },
   safelist: [
     {
-      pattern: /bg-(light|dark)-(.*)/,
+      pattern: /(bg|text)-(light|dark)-(.*)/,
+      variants: ['hover']
     },
   ]
 }
