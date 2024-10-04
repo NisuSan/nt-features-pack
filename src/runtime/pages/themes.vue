@@ -2,8 +2,8 @@
   <div class="w-full h-full flex flex-col">
     <div class="w-full flex justify-center items-center font-semibold text-4xl mt-5 mb-7">Theme Genarator</div>
     <div style="height: calc(100vh - 6.5rem);" id="themes-panel" class="grid grid-cols-10 gap-4 px-4">
-      <n-card class="col-span-3 shadow-md" title="List of the themes">
-        <div v-for="(colors, theme) in existingThemes" :key="theme">
+      <n-card class="col-span-3 shadow-md" :title="editingTheme ? `Editing the ${capitalize(editingTheme)} theme` : 'List of the themes'">
+        <div v-for="(colors, theme) in filteredThemes" :key="theme">
           <span class="flex justify-between mb-1 mx-3 font-semibold">
             <span>{{ capitalize(theme) }}</span>
             <span>
@@ -60,6 +60,8 @@
 
   const existingThemes = reactive<Record<string, Record<string, string>>>({})
   Object.entries(appColors).forEach(([key, value]) => (existingThemes[key.split('-')[0]] ??= {})[key] = value)
+
+  const filteredThemes = computed(() => Object.fromEntries(Object.entries(existingThemes).filter(([k]) => k === (editingTheme.value ? editingTheme.value : k))))
 
   function createTheme() {
     const newTheme = `new${Object.keys(existingThemes).length}`

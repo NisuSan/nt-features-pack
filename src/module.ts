@@ -19,6 +19,11 @@ export interface ModuleOptions {
   tailwind?: {
     internal: boolean,
     config?: TailwindModuleOptions
+  },
+  iconify?: {
+    disable?: boolean,
+    iconPacks?: string[],
+    provider?: 'css' | 'tailwind'
   }
 }
 
@@ -50,6 +55,11 @@ export default defineNuxtModule<ModuleOptions>({
           content: [ resolve('./runtime/pages/themes.vue'), ]
         }
       }
+    },
+    iconify: {
+      disable: false,
+      iconPacks: ['mdi'],
+      provider: 'tailwind'
     }
   },
   async setup(_options, _nuxt) {
