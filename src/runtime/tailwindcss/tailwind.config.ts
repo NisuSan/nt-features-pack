@@ -26,7 +26,7 @@ export default <Partial<Config>> {
     {
       pattern: /(bg|text)-(light|dark)-(.*)/,
       variants: ['hover']
-    },
+    }
   ],
   plugins: [
     addDynamicIconSelectors()

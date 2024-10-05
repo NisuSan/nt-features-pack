@@ -1,4 +1,4 @@
-import { defineNuxtModule, installModule, extendPages, addImportsDir } from '@nuxt/kit'
+import { defineNuxtModule, installModule, extendPages, addImportsDir, addComponent } from '@nuxt/kit'
 import { type ModuleOptions as TailwindModuleOptions } from '@nuxtjs/tailwindcss'
 import { resolve } from './runtime/utils/index.ts'
 
@@ -14,7 +14,8 @@ export interface ModuleOptions {
     location?: string,
     scssMixins?: [string[], 'apppend' | 'replace'],
     themeCss?: [string[], 'apppend' | 'replace'],
-    themeCode?: [string, string]
+    themeCode?: [string, string],
+    tailwindUtilsExtension?: string
   },
   tailwind?: {
     internal: boolean,
@@ -22,8 +23,8 @@ export interface ModuleOptions {
   },
   iconify?: {
     disable?: boolean,
-    iconPacks?: string[],
-    provider?: 'css' | 'tailwind'
+    provider?: 'css' | 'tailwind',
+    css?: string
   }
 }
 
@@ -44,7 +45,7 @@ export default defineNuxtModule<ModuleOptions>({
       target: 'naive-ui',
       scssMixins: [[], 'apppend'],
       themeCss: [[], 'apppend'],
-      themeCode: [resolve('./runtime/modules/theme_generator/source/naiveUiOverrides.ts'), 'naiveUiOverrides']
+      themeCode: [resolve('./runtime/modules/theme_generator/source/naiveUiOverrides.ts'), 'naiveUiOverrides'],
     },
     tailwind: {
       internal: true,
@@ -58,8 +59,7 @@ export default defineNuxtModule<ModuleOptions>({
     },
     iconify: {
       disable: false,
-      iconPacks: ['mdi'],
-      provider: 'tailwind'
+      provider: 'tailwind',
     }
   },
   async setup(_options, _nuxt) {
@@ -76,11 +76,19 @@ export default defineNuxtModule<ModuleOptions>({
         })
       })
 
-      await installModule(resolve('./runtime/modules/theme_generator/index.ts'), _options.themeGenerator)
+      await installModule(resolve('./runtime/modules/theme_generator/index.ts'), { ..._options.themeGenerator, isIconify: _options.iconify?.disable, iconifyCss: _options.iconify?.css })
     }
 
     if(_options.tailwind?.internal) {
       installModule('@nuxtjs/tailwindcss', _options.tailwind.config).then(x => {})
+    }
+
+    if(!_options.iconify?.disable) {
+      addComponent({
+        name: 'CIcon',
+        export: 'CIcon',
+        filePath: resolve('./runtime/components'),
+      })
     }
 
     await installModule('@vueuse/nuxt')

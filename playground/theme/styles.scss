@@ -125,3 +125,28 @@ $buttons: ('default': 'main-brand', 'primary': 'main-brand', 'info': 'info', 'su
 }
 
 
+
+
+span[class^="icon-"] {
+  position: relative;
+  left: 0.5px;
+  top: 1px;
+  width: 1.2em !important;
+  height: 1.2em !important;
+}
+
+[theme=light] span[class^="icon-"] {
+  color: theme('colors.dark-text');
+}
+
+[theme=dark] span[class^="icon-"] {
+  color: theme('colors.light-text');
+}
+
+.icon-light {
+  color: theme('colors.dark-text') !important;
+}
+
+.icon-dark {
+  color: theme('colors.light-text') !important;
+}
