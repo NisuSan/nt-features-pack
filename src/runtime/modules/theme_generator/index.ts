@@ -35,7 +35,7 @@ export default defineNuxtModule<ModuleOptions>({
       const css = (_options.themeCss![1] === 'apppend'
         ? (_options.target === 'naive-ui' ? readFileSync(resolve('../theme_generator/source/naiveUi.scss'), 'utf-8').toString() : '') + '\n\n'
         : '') + _options.themeCss![0].map(x => `/*content from <${x}>*/\n${readFileSync(x, 'utf-8').toString()}`).join('\n\n')
-              + (!_options.isIconify ? '\n\n' + readFileSync(resolve('../iconify/icon.scss'), 'utf-8').toString() : '')
+              + (!_options.isIconify ? '\n\n' + readFileSync(resolve('../iconify/index.scss'), 'utf-8').toString() : '')
               + (_options.iconifyCss ? '\n\n' + readFileSync(_options.iconifyCss, 'utf-8').toString() : '')
 
       createFile(resolve(rootDir, `styles.scss`, 'src'), mixins + '\n\n' + css)
