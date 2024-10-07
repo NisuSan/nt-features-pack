@@ -2,7 +2,11 @@
   <div class="w-full h-full flex flex-col">
     <div class="w-full flex justify-center items-center font-semibold text-4xl mt-5 mb-7">Theme Genarator</div>
     <div style="height: calc(100vh - 6.5rem);" id="themes-panel" class="grid grid-cols-10 gap-4 px-4">
-      <n-card class="col-span-3 shadow-md" :title="editingTheme ? `Editing the ${capitalize(editingTheme)} theme` : 'List of the themes'">
+      <n-card class="col-span-3 shadow-md">
+        <template #header>
+          <span v-if="editingTheme" class="font-semibold">Editing the <span :class="`text-${themeName}-warning`">{{ capitalize(editingTheme) }}</span> theme</span>
+          <span v-else class="font-semibold">Available Themes</span>
+        </template>
         <div v-for="(colors, theme)  in filteredThemes" :key="theme">
           <span class="flex justify-between mb-1 mx-3 font-semibold">
             <span>{{ capitalize(theme as string) }}</span>
@@ -21,8 +25,17 @@
             </n-scrollbar>
           </div>
         </div>
-        <n-float-button position="absolute" right="14px" bottom="14px" type="primary" @click="createTheme()">
-           <span class="icon-[pepicons-pop--plus]"></span>
+        <div v-if="editingTheme">
+           <c-input v-model.number="testInput.aa" type="text" validation="text" />
+        </div>
+        <n-float-button v-if="editingTheme" position="absolute" left="14px" bottom="14px" type="primary" @click="declineThemeEditing()">
+          <span class="icon-[pepicons-pop--arrow-spin]"></span>
+        </n-float-button>
+        <n-float-button v-if="!editingTheme" position="absolute" right="14px" bottom="14px" type="primary" @click="createTheme()">
+          <span class="icon-[pepicons-pop--plus]"></span>
+        </n-float-button>
+        <n-float-button v-else position="absolute" right="14px" bottom="14px" type="primary" @click="saveThemeEditing()">
+          <span class="icon-[pepicons-pop--floppy-disk]"></span>
         </n-float-button>
       </n-card>
       <n-card class="col-span-7 shadow-md" title="Preview">
@@ -41,22 +54,20 @@
 
 <script setup lang="ts">
   import { computed, reactive, ref } from '#imports'
+  import { useDialog } from 'naive-ui'
   import { useTheme } from '../composables'
   import { api } from '../composables/apiComposables'
   import { useAppColors } from '../composables/generableComposables'
   import { capitalize } from '../utils/pure'
+  import CInput from '../components/CInput.vue'
 
+  const dialog = useDialog()
   const { themeName, setTheme } = useTheme()
   const appColors = useAppColors()
-  const baseColors = [
-    'background',
-    'text',
-    'main-brand',
-    'success',
-    'danger',
-    'warning',
-  ]
+  const baseColors = [ 'background', 'text', 'main-brand', 'success', 'danger', 'warning', ]
   const editingTheme = ref('')
+  const bcTheme = reactive({})
+  const testInput = reactive({ aa: 18 })
 
   const existingThemes = reactive<Record<string, Record<string, string>>>({})
   Object.entries(appColors).forEach(([key, value]) => (existingThemes[key.split('-')[0]] ??= {})[key] = value)
@@ -70,6 +81,25 @@
 
   function editTheme(theme: string) {
     editingTheme.value = theme
+    Object.assign(bcTheme, { ...existingThemes[theme] })
+  }
+
+  function declineThemeEditing() {
+    dialog.warning({
+      title: 'Confirm',
+      content: 'Are you sure?',
+      positiveText: 'Sure',
+      negativeText: 'Not Sure',
+      onPositiveClick: () => {
+        existingThemes[editingTheme.value] = bcTheme
+        Object.assign(bcTheme, {})
+        editingTheme.value = ''
+      }
+    })
+  }
+
+  function saveThemeEditing() {
+    editingTheme.value = ''
   }
 
 </script>

@@ -1,6 +1,8 @@
 <template>
   <n-config-provider :locale="ukUA" :date-locale="dateUkUA" :theme-overrides="themeUI">
-    <NuxtPage />
+    <n-dialog-provider>
+      <NuxtPage />
+    </n-dialog-provider>
   </n-config-provider>
 </template>
 

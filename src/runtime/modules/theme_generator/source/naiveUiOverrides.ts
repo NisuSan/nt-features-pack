@@ -85,7 +85,7 @@ export function naiveUiOverrides(appColors: Record<string, string>, themeName: C
     },
     Collapse: {
       arrowColor: ld(appColors[`light-main-brand`], appColors[`dark-light-accent`]),
-      titleTextColor: appColors[`${themeName.value}-text`], //themeName.value == 'light' ? appColors['light-text'] : appColors[`dark-card-text`],
+      titleTextColor: appColors[`${themeName.value}-text`],
       dividerColor: appColors[`${themeName.value}-light-accent`] + (themeName.value == 'light' ? 40 : 45),
       itemMargin: '10px 0 0 0',
       titlePadding: '10px 0 0 0',
@@ -96,8 +96,12 @@ export function naiveUiOverrides(appColors: Record<string, string>, themeName: C
     },
     Tabs: {
       tabFontWeightActive: '500',
-      tabTextColorLine: appColors[`${themeName.value}-text`], //themeName.value == 'light' ? appColors['light-text'] : appColors[`dark-card-text`]
-      tabTextColorBar: appColors[`${themeName.value}-text`], //themeName.value == 'light' ? appColors['light-text'] : appColors[`dark-card-text`]
+      tabTextColorLine: appColors[`${themeName.value}-text`],
+      tabTextColorBar: appColors[`${themeName.value}-text`],
     },
+    Dialog: {
+      titleTextColor: appColors[`${themeName.value}-text`],
+      textColor: appColors[`${themeName.value}-text`],
+    }
   }))
 }

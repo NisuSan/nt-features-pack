@@ -1,4 +1,4 @@
-import { defineNuxtModule, installModule, extendPages, addImportsDir, addComponent } from '@nuxt/kit'
+import { defineNuxtModule, installModule, extendPages, addImportsDir, addComponent, addComponentsDir } from '@nuxt/kit'
 import { type ModuleOptions as TailwindModuleOptions } from '@nuxtjs/tailwindcss'
 import { resolve } from './runtime/utils/index.ts'
 
@@ -50,7 +50,7 @@ export default defineNuxtModule<ModuleOptions>({
     tailwind: {
       internal: true,
       config: {
-        cssPath: [resolve('./runtime/tailwindcss/tailwind.css'), { injectPosition: "first" }],
+        cssPath: [resolve('./runtime/tailwindcss/tailwind.css'), { injectPosition: 'first' }],
         configPath: resolve('./runtime/tailwindcss/tailwind.config.ts'),
         config: {
           content: [ resolve('./runtime/pages/themes.vue'), ]
@@ -93,5 +93,6 @@ export default defineNuxtModule<ModuleOptions>({
 
     await installModule('@vueuse/nuxt')
     addImportsDir(resolve('./runtime/composables'))
+    addComponentsDir({ path: resolve('./runtime/components') })
   },
 })
