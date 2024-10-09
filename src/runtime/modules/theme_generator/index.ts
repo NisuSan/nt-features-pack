@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { defineNuxtModule } from '@nuxt/kit'
 import { defu } from 'defu'
-import { defaultColorShema, tailwindFileContent, injectColorsToTailwind, createGenerableComposables, themeComposableGenerator, generateRuntimeApiRoutes } from './theme.templates.ts'
+import { defaultColorShema, tailwindFileContent, buildCssColors, createGenerableComposables, themeComposableGenerator, generateRuntimeApiRoutes } from './theme.templates.ts'
 import { createFile, resolve } from '../../utils/index.ts'
 
 export interface ModuleOptions {
@@ -26,7 +26,6 @@ export default defineNuxtModule<ModuleOptions>({
       const rootDir = resolve(_options.location, 'src')
 
       createFile(resolve(rootDir, 'theme.colors.ts'), `export default ${JSON.stringify(defaultColorShema)}`)
-      injectColorsToTailwind(_options.location)
 
       const mixins = (_options.scssMixins![1] === 'apppend'
         ? readFileSync(resolve('../theme_generator/source/mixins.scss'), 'utf-8').toString() + '\n\n'
@@ -38,9 +37,10 @@ export default defineNuxtModule<ModuleOptions>({
               + (!_options.isIconify ? '\n\n' + readFileSync(resolve('../iconify/index.scss'), 'utf-8').toString() : '')
               + (_options.iconifyCss ? '\n\n' + readFileSync(_options.iconifyCss, 'utf-8').toString() : '')
 
-      createFile(resolve(rootDir, `styles.scss`, 'src'), mixins + '\n\n' + css)
+      createFile(resolve(rootDir, 'styles.scss', 'src'), mixins + '\n\n' + css)
+      createFile(resolve(rootDir, 'theme.colors.css', 'src'), buildCssColors(rootDir))
 
-      const content = tailwindFileContent + `\n@import "${rootDir}/styles.scss";`
+      const content = tailwindFileContent + `\n@import "${rootDir}/styles.scss";\n@import "${rootDir}/theme.colors.css";`
         + (_options.tailwindUtilsExtension ? '\n\n' + readFileSync(resolve(_options.tailwindUtilsExtension), 'utf-8').toString() : '')
       createFile(resolve('../../tailwindcss/tailwind.css'), content)
 

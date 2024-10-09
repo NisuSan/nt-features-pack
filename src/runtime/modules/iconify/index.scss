@@ -6,18 +6,14 @@ span[class^="icon-"] {
   height: 1.3em !important;
 }
 
-[theme=light] span[class^="icon-"] {
-  color: theme('colors.dark-text');
+html span[class^="icon-"] {
+  color: theme('colors.text');
 }
 
-[theme=dark] span[class^="icon-"] {
-  color: theme('colors.light-text');
+[theme='light'] .icon-light {
+  color: theme('colors.text') !important;
 }
 
-.icon-light {
-  color: theme('colors.dark-text') !important;
-}
-
-.icon-dark {
-  color: theme('colors.light-text') !important;
+[theme='dark'] .icon-dark {
+  color: theme('colors.text') !important;
 }

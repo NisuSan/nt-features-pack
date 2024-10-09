@@ -61,6 +61,9 @@
   import { capitalize } from '../utils/pure'
   import CInput from '../components/CInput.vue'
 
+  console.log(useAppColors());
+
+
   const dialog = useDialog()
   const { themeName, setTheme } = useTheme()
   const appColors = useAppColors()

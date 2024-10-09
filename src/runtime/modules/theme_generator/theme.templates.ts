@@ -1,64 +1,69 @@
-import { addServerHandler, useNuxt } from '@nuxt/kit'
+import { addServerHandler } from '@nuxt/kit'
 import fg from 'fast-glob'
 import { existsSync } from 'node:fs'
-import { ObjectLiteralExpression, Project, SyntaxKind } from 'ts-morph'
+import { Project } from 'ts-morph'
 import { createFile, getRuntimeApiDir, getUrlRouteFromFile, resolve } from '../../utils/index.ts'
 
 export const defaultColorShema = {
-  'light-background': '#F3F1F2',
-  'light-card-background': 'transparent',
-  'light-input-background': 'transparent',
-  'light-text': '#252538',
-  'light-main-brand': '#6067B1',
-  'light-main-brand-hover': '#4F5590',
-  'light-light-shades': '#F3F1F2',
-  'light-light-accent': '#8478B8',
-  'light-light-accent-hover': '#6B5B9E',
-  'light-dark-accent': '#AC4259',
-  'light-dark-accent-hover': '#903548',
-  'light-dark-shades': '#252538',
-  'light-default': '#888888',
-  'light-success': '#5d9966',
-  'light-success-hover': '#4c8053',
-  'light-warning': '#da892e',
-  'light-warning-hover': '#b26e24',
-  'light-danger': '#f44336',
-  'light-danger-hover': '#c7352b',
-  'light-info': '#7A6AAE',
-  'light-info-hover': '#6B5B9E',
-  'light-border': '#9E8ECB',
-  'light-disabled-background': '#E0E0E0',
-  'light-disabled-text': '#A0A0A0',
-  'light-disabled-border': '#D1D1D1',
-  'light-placeholder': '#B0B0B0',
-  'light-placeholder-disabled': '#9d9d9d',
-  'dark-background': '#1C1C1E',
-  'dark-card-background': '#2C2C2E',
-  'dark-input-background': '#3A3A3C',
-  'dark-text': '#F3F1F2',
-  'dark-card-text': '#d0c8cc',
-  'dark-main-brand': '#686CCF',
-  'dark-main-brand-hover': '#42477A',
-  'dark-light-shades': '#7A6AAE',
-  'dark-light-accent': '#A397E1',
-  'dark-light-accent-hover': '#42477A',
-  'dark-dark-accent': '#AC4259',
-  'dark-dark-accent-hover': '#903548',
-  'dark-default': '#707070',
-  'dark-success': '#5d9966',
-  'dark-success-hover': '#4c8053',
-  'dark-warning': '#da892e',
-  'dark-warning-hover': '#b26e24',
-  'dark-danger': '#f44336',
-  'dark-danger-hover': '#c7352b',
-  'dark-info': '#7A6AAE',
-  'dark-info-hover': '#6B5B9E',
-  'dark-border': '#6C6C6E',
-  'dark-disabled-background': '#2E2E30',
-  'dark-disabled-text': '#6C6C6E',
-  'dark-disabled-border': '#3D3D3F',
-  'dark-placeholder': '#7A7A7C',
-  'dark-placeholder-disabled': '#58585a',
+  light: {
+    background: '#F3F1F2',
+    'card-background': 'transparent',
+    'input-background': 'transparent',
+    'text': '#252538',
+    'card-text': '#252538',
+    'main-brand': '#6067B1',
+    'main-brand-hover': '#4F5590',
+    'light-shades': '#F3F1F2',
+    'light-accent': '#8478B8',
+    'light-accent-hover': '#6B5B9E',
+    'dark-accent': '#AC4259',
+    'dark-accent-hover': '#903548',
+    'dark-shades': '#252538',
+    'default': '#888888',
+    'success': '#5d9966',
+    'success-hover': '#4c8053',
+    'warning': '#da892e',
+    'warning-hover': '#b26e24',
+    'danger': '#f44336',
+    'danger-hover': '#c7352b',
+    'info': '#7A6AAE',
+    'info-hover': '#6B5B9E',
+    'border': '#9E8ECB',
+    'disabled-background': '#E0E0E0',
+    'disabled-text': '#A0A0A0',
+    'disabled-border': '#D1D1D1',
+    'placeholder': '#B0B0B0',
+    'placeholder-disabled': '#9d9d9d',
+  },
+  dark: {
+    'background': '#1C1C1E',
+    'card-background': '#2C2C2E',
+    'input-background': '#3A3A3C',
+    'text': '#F3F1F2',
+    'card-text': '#d0c8cc',
+    'main-brand': '#686CCF',
+    'main-brand-hover': '#42477A',
+    'light-shades': '#7A6AAE',
+    'light-accent': '#A397E1',
+    'light-accent-hover': '#42477A',
+    'dark-accent': '#AC4259',
+    'dark-accent-hover': '#903548',
+    'default': '#707070',
+    'success': '#5d9966',
+    'success-hover': '#4c8053',
+    'warning': '#da892e',
+    'warning-hover': '#b26e24',
+    'danger': '#f44336',
+    'danger-hover': '#c7352b',
+    'info': '#7A6AAE',
+    'info-hover': '#6B5B9E',
+    'border': '#6C6C6E',
+    'disabled-background': '#2E2E30',
+    'disabled-text': '#6C6C6E',
+    'disabled-border': '#3D3D3F',
+    'placeholder': '#7A7A7C',
+    'placeholder-disabled': '#58585a',
+  }
 }
 
 export const tailwindFileContent = `
@@ -67,33 +72,34 @@ export const tailwindFileContent = `
 @import "tailwindcss/utilities";
 `
 
-export function injectColorsToTailwind(location: string) {
-  const colors = require(resolve(location, 'theme.colors.ts', 'src'))
-  const sourceFile = new Project().addSourceFileAtPath(resolve('../../tailwindcss/tailwind.config.ts'))
-
-  const themeInitializer = (sourceFile.getFirstDescendantByKind(SyntaxKind.ObjectLiteralExpression)?.getProperty('theme') as any)?.getInitializerIfKindOrThrow(SyntaxKind.ObjectLiteralExpression) as ObjectLiteralExpression
-  const extendInitializer = (themeInitializer.getPropertyOrThrow('extend') as any)?.getInitializerIfKindOrThrow(SyntaxKind.ObjectLiteralExpression) as ObjectLiteralExpression
-
-  extendInitializer.getProperty('colors')?.remove()
-  extendInitializer?.addPropertyAssignment({ name: 'colors', initializer: JSON.stringify(colors) })
-  sourceFile.saveSync()
+export function buildCssColors(location: string) {
+  return Object.keys(require(resolve(location, 'theme.colors.ts', 'src'))).map(theme => {
+    //@ts-expect-error
+    return `[theme='${theme}'] {\n` + Object.entries(defaultColorShema[theme]).map(([key, value]) => `  --${key}: ${value};`).join('\n') + '\n}'
+  }).join('\n')
 }
 
 export function createGenerableComposables(location: string) {
-  const colorProps = Object.keys(require(resolve(location, 'theme.colors.ts', 'src')))
-  const themes = [...new Set(colorProps.map(x => x.split('-')[0]))]
+  const colors = require(resolve(location, 'theme.colors.ts', 'src'))
+  const themes = Object.keys(colors)
 
+  if(findDiffKeys(Object.values(colors)).length > 0) {
+    throw new Error('Theme colors are not consistent!')
+  }
+
+  const props = Object.keys(colors[themes[0]])
   createFile(resolve('../../composables/generableComposables.ts'), `
-    import * as twConfig from '../tailwindcss/tailwind.config.ts'
+    // getComputedStyle(document.querySelector('html')).getPropertyValue('--background')
     import {type ComputedRef } from 'vue'
 
-    type AppColors = {${colorProps.map(k => `'${k}': string`).join(',\n')}}
+    type AppColors = {${props.map((k: string) => `'${k}': string`).join(',')}}
 
     export function useAppColors(): AppColors {
-      return twConfig.default.theme?.extend?.colors as AppColors
+      const appColors = ${JSON.stringify(colors)} as const
+      return  as AppColors
     }
 
-    export function useColorChooser(themeName: ComputedRef<string>) {
+    export function useColorChooser(themeName: ComputedRef<string> | string) {
       // @ts-ignore
       return (${themes.map(t => `${t}: string`).join(', ')}): string => ({${themes.join(', ')}}[themeName.value])
     }
@@ -125,4 +131,23 @@ export function generateRuntimeApiRoutes() {
   for (const apiPath of moduleThemeApi) {
     addServerHandler({ route: getUrlRouteFromFile(apiPath), handler: apiPath })
   }
+}
+
+function findDiffKeys(...objects: object[]): string[] {
+  const diffKeys = new Set<string>()
+  const allKeys = new Set<string>()
+
+  for (const obj of objects) {
+    for (const key in obj) {
+      allKeys.add(key);
+    }
+  }
+
+  for (const key of allKeys) {
+    if (!objects.every(obj => key in obj)) {
+      diffKeys.add(key)
+    }
+  }
+
+  return Array.from(diffKeys)
 }

@@ -47,14 +47,9 @@
 
 
 
-@include themed('', 'light') {
-  background-color: theme('colors.light-background') !important;
-  color: theme('colors.light-text') !important;
-}
-
-@include themed('', 'dark') {
-  background-color: theme('colors.dark-background') !important;
-  color: theme('colors.dark-text') !important;
+html {
+  background-color: theme('colors.background') !important;
+  color: theme('colors.text') !important;
 }
 
 @include themed('.n-button.n-button--tertiary-type', 'light') {
@@ -78,12 +73,12 @@
   border: 1px solid transparent !important;
 }
 
-@include themed('.n-base-selection:not(.n-base-selection--disabled) .n-base-selection-label, .n-input:not(.n-input--disabled)', 'dark') {
-  background-color: theme('colors.dark-input-background') !important;
+.n-base-selection:not(.n-base-selection--disabled) .n-base-selection-label, .n-input:not(.n-input--disabled) {
+  background-color: theme('colors.input-background') !important;
 }
 
-@include themed('.n-base-selection:not(.n-base-selection--disabled) .n-base-selection-placeholder, .n-input:not(.n-input--disabled) .n-input__placeholder', 'dark') {
-  color: theme('colors.dark-card-text') !important;
+.n-base-selection:not(.n-base-selection--disabled) .n-base-selection-placeholder, .n-input:not(.n-input--disabled) .n-input__placeholder {
+  color: theme('colors.card-text') !important;
 }
 
 @include themed('.n-card', 'light') {
@@ -92,14 +87,7 @@
 
 .n-collapse-item__header--active .n-collapse-item__header-main {
   font-weight: 500 !important;
-
-  @include light() {
-    color: theme('colors.light-main-brand') !important;
-  }
-
-  @include dark() {
-    color: theme('colors.dark-light-accent') !important;
-  }
+  color: theme('colors.main-brand') !important;
 }
 
 .n-base-selection.n-base-selection--disabled {
@@ -114,7 +102,7 @@ $buttons: ('default': 'main-brand', 'primary': 'main-brand', 'info': 'info', 'su
 @each $t in ('light', 'dark') {
   @each $btn, $n in $buttons {
     [theme=#{$t}] .n-button.n-button--#{$btn}-type.n-button--dashed:active {
-      color: theme('colors.#{$t}-#{$n}-hover') !important;
+      color: theme('colors.#{$n}-hover') !important;
       background-color: if($t == 'light', rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05)) !important;
 
       .n-button__state-border {
@@ -135,18 +123,14 @@ span[class^="icon-"] {
   height: 1.3em !important;
 }
 
-[theme=light] span[class^="icon-"] {
-  color: theme('colors.dark-text');
+html span[class^="icon-"] {
+  color: theme('colors.text');
 }
 
-[theme=dark] span[class^="icon-"] {
-  color: theme('colors.light-text');
+[theme='light'] .icon-light {
+  color: theme('colors.text') !important;
 }
 
-.icon-light {
-  color: theme('colors.dark-text') !important;
-}
-
-.icon-dark {
-  color: theme('colors.light-text') !important;
+[theme='dark'] .icon-dark {
+  color: theme('colors.text') !important;
 }
