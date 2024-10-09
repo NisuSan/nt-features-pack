@@ -87,21 +87,20 @@ export function createGenerableComposables(location: string) {
     throw new Error('Theme colors are not consistent!')
   }
 
-  const props = Object.keys(colors[themes[0]])
+  const c = (entity: (key: string) => string) => Object.keys(colors[themes[0]]).map((k: string) => `'${k}': ${entity(k)}`).join(',')
   createFile(resolve('../../composables/generableComposables.ts'), `
-    // getComputedStyle(document.querySelector('html')).getPropertyValue('--background')
-    import {type ComputedRef } from 'vue'
+    import {type ComputedRef, isRef } from 'vue'
 
-    type AppColors = {${props.map((k: string) => `'${k}': string`).join(',')}}
+    type AppColors = {${c(_ => 'string')}}
 
-    export function useAppColors(): AppColors {
-      const appColors = ${JSON.stringify(colors)} as const
-      return  as AppColors
+    export function useAppColors(theme?: ${themes.map(x => `'${x}'`).join('|')}): AppColors {
+      const docStyles = getComputedStyle(document.querySelector(\`[theme\$\{theme ? \`\=\'\$\{theme\}\'\` : ''\}]\`)!)
+      return {${c(k => `docStyles.getPropertyValue('--${k}')`)}} as AppColors
     }
 
     export function useColorChooser(themeName: ComputedRef<string> | string) {
       // @ts-ignore
-      return (${themes.map(t => `${t}: string`).join(', ')}): string => ({${themes.join(', ')}}[themeName.value])
+      return (${themes.map(t => `${t}: string`).join(', ')}): string => ({${themes.join(', ')}}[isRef(themeName) ? themeName.value : value])
     }
 
     export function useThemeNames() {
