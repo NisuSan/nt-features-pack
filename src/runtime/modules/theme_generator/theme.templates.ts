@@ -48,6 +48,7 @@ export const defaultColorShema = {
     'light-accent-hover': '#42477A',
     'dark-accent': '#AC4259',
     'dark-accent-hover': '#903548',
+    'dark-shades': '#1C1C1E',
     'default': '#707070',
     'success': '#5d9966',
     'success-hover': '#4c8053',
@@ -82,20 +83,25 @@ export function buildCssColors(location: string) {
 export function createGenerableComposables(location: string) {
   const colors = require(resolve(location, 'theme.colors.ts', 'src'))
   const themes = Object.keys(colors)
+  const themeAsTypes = themes.map(x => `'${x}'`).join('|')
 
   if(findDiffKeys(Object.values(colors)).length > 0) {
     throw new Error('Theme colors are not consistent!')
   }
 
-  const c = (entity: (key: string) => string) => Object.keys(colors[themes[0]]).map((k: string) => `'${k}': ${entity(k)}`).join(',')
   createFile(resolve('../../composables/generableComposables.ts'), `
     import {type ComputedRef, isRef } from 'vue'
+    export type AppColors = {${Object.keys(colors[themes[0]]).map((k: string) => `'${k}': string`).join(',')}}
 
-    type AppColors = {${c(_ => 'string')}}
+    export function useAppColors(): Record<'currentColors'|${themes.map(x => `'${x}'`).join('|')}, AppColors> {
+      const themeName = document.querySelector('html')!.getAttribute('theme') || 'light'
+      const colors = ${JSON.stringify(colors)}
 
-    export function useAppColors(theme?: ${themes.map(x => `'${x}'`).join('|')}): AppColors {
-      const docStyles = getComputedStyle(document.querySelector(\`[theme\$\{theme ? \`\=\'\$\{theme\}\'\` : ''\}]\`)!)
-      return {${c(k => `docStyles.getPropertyValue('--${k}')`)}} as AppColors
+      return {
+        //@ts-expect-error
+        currentColors: colors[themeName] as AppColors,
+        ${themes.map(t => `${t}: colors['${t}']`).join(', ')}
+      }
     }
 
     export function useColorChooser(themeName: ComputedRef<string> | string) {

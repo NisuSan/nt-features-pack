@@ -1,8 +1,8 @@
 import { type ComputedRef, computed } from 'vue'
 import { type GlobalThemeOverrides } from 'naive-ui'
-import { useColorChooser } from "../../../composables/generableComposables.ts"
+import { useColorChooser, type AppColors } from "../../../composables/generableComposables.ts"
 
-export function naiveUiOverrides(appColors: Record<string, string>, themeName: ComputedRef<string>) {
+export function naiveUiOverrides(appColors: AppColors, themeName: ComputedRef<string>) {
   const ld = useColorChooser(themeName)
   const buttonColorMap = (prop: string) => [prop, appColors[`${themeName.value}-text`]]
 

@@ -1,4 +1,4 @@
-import { defineNuxtModule, installModule, extendPages, addImportsDir, addComponent, addComponentsDir } from '@nuxt/kit'
+import { defineNuxtModule, installModule, extendPages, addImportsDir, addComponent, addComponentsDir, addPlugin } from '@nuxt/kit'
 import { type ModuleOptions as TailwindModuleOptions } from '@nuxtjs/tailwindcss'
 import { resolve } from './runtime/utils/index.ts'
 
@@ -94,5 +94,6 @@ export default defineNuxtModule<ModuleOptions>({
     await installModule('@vueuse/nuxt')
     addImportsDir(resolve('./runtime/composables'))
     addComponentsDir({ path: resolve('./runtime/components') })
+    addPlugin(resolve('./runtime/plugins/tippy.ts'))
   },
 })
