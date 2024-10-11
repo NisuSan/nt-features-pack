@@ -80,52 +80,53 @@ export function buildCssColors(location: string) {
   }).join('\n')
 }
 
-export function createGenerableComposables(location: string) {
+export function createGenerableComposables(location: string, [path, fn]: [string, string]) {
   const colors = require(resolve(location, 'theme.colors.ts', 'src'))
   const themes = Object.keys(colors)
-  const themeAsTypes = themes.map(x => `'${x}'`).join('|')
 
-  if(findDiffKeys(Object.values(colors)).length > 0) {
-    throw new Error('Theme colors are not consistent!')
-  }
-
-  createFile(resolve('../../composables/generableComposables.ts'), `
-    import {type ComputedRef, isRef } from 'vue'
-    export type AppColors = {${Object.keys(colors[themes[0]]).map((k: string) => `'${k}': string`).join(',')}}
-
-    export function useAppColors(): Record<'currentColors'|${themes.map(x => `'${x}'`).join('|')}, AppColors> {
-      const colors = ${JSON.stringify(colors)}
-
-      return {
-        //@ts-expect-error
-        currentColors: computed<AppColors>(x => colors[useColorMode().value]),
-        ${themes.map(t => `${t}: colors['${t}']`).join(', ')}
-      }
-    }
-
-    export function useColorChooser(themeName: ComputedRef<string> | string) {
-      // @ts-ignore
-      return (${themes.map(t => `${t}: string`).join(', ')}): string => ({${themes.join(', ')}}[isRef(themeName) ? themeName.value : value])
-    }
-
-    export function useThemeNames() {
-      return ${JSON.stringify(themes)} as const
-    }
-  `)
-}
-
-export function themeComposableGenerator([path, fn]: [string, string]) {
   if(!existsSync(path)) throw new Error(`Path ${path} does not exist`)
   const file = new Project().addSourceFileAtPath(path)
 
   const themeFunction = file.getFunction(fn)
   if(!themeFunction) throw new Error(`Function ${fn} not found in ${path}`)
 
-  createFile(resolve('../../composables/themeComposables.ts'), `
-    import { type ComputedRef } from 'vue'
+  if(findDiffKeys(Object.values(colors)).length > 0) throw new Error('Theme colors are not consistent!')
+
+  createFile(resolve('../../composables/generableComposables.ts'), `
+    import {type ComputedRef, isRef, computed } from 'vue'
+    import { useColorMode } from '@vueuse/core'
     import { ${fn} } from '${path}'
-    export function __useThemeCode(appColors: Record<string, string>, themeName: ComputedRef<string>) {
-      return ${fn}(appColors, themeName)
+    export type AppColors = {${Object.keys(colors[themes[0]]).map((k: string) => `'${k}': string`).join(',')}}
+
+    export function useAppColors() {
+      const colors = ${JSON.stringify(colors)}
+      const theme = useColorMode()
+      return {
+        //@ts-expect-error
+        currentColors: computed<AppColors>(x => colors[theme.value]),
+        ${themes.map(t => `${t}: colors['${t}']`).join(', ')}
+      }
+    }
+
+    export function useColorChooser() {
+      const theme = useColorMode()
+      const colors = useAppColors()
+      return ((${themes.map(t => `${t}Color: keyof AppColors`).join(',')}) => computed<string>(() => {
+        const l = {${themes.map(t => `'${t}': ${t}Color`).join(',')}}
+        //@ts-expect-error
+        return colors[theme.value][l[theme.value]] || l[theme.value]
+      })) as {
+        (${themes.map(t => `${t}Color: keyof AppColors`).join(',')}): ComputedRef<string>,
+        (${themes.map(t => `${t}Color: string`).join(',')}): ComputedRef<string>,
+      }
+    }
+
+    export function useThemeNames() {
+      return ${JSON.stringify(themes)} as const
+    }
+
+    export function __useThemeCode(appColors: ComputedRef<AppColors>) {
+      return ${fn}(appColors)
     }
   `)
 }

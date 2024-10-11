@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { defineNuxtModule } from '@nuxt/kit'
 import { defu } from 'defu'
-import { defaultColorShema, tailwindFileContent, buildCssColors, createGenerableComposables, themeComposableGenerator, generateRuntimeApiRoutes } from './theme.templates.ts'
+import { defaultColorShema, tailwindFileContent, buildCssColors, createGenerableComposables, generateRuntimeApiRoutes } from './theme.templates.ts'
 import { createFile, resolve } from '../../utils/index.ts'
 
 export interface ModuleOptions {
@@ -44,8 +44,7 @@ export default defineNuxtModule<ModuleOptions>({
         + (_options.tailwindUtilsExtension ? '\n\n' + readFileSync(resolve(_options.tailwindUtilsExtension), 'utf-8').toString() : '')
       createFile(resolve('../../tailwindcss/tailwind.css'), content)
 
-      createGenerableComposables(_options.location)
-      themeComposableGenerator(_options.themeCode)
+      createGenerableComposables(_options.location, _options.themeCode)
 
       if(process.env.NODE_ENV === 'development') {
         generateRuntimeApiRoutes()

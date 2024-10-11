@@ -1,10 +1,9 @@
-import { useAppColors, useThemeNames } from './generableComposables.ts'
+import { useAppColors, useThemeNames, __useThemeCode } from './generableComposables.ts'
 import { useColorMode, useDark, useToggle } from '@vueuse/core'
 import { computed } from 'vue'
-import { __useThemeCode } from './themeComposables.ts'
 
 export function useTheme() {
-  const appColors = useAppColors() as Record<string, string>
+  const { currentColors } = useAppColors()
   const possibleThemes = useThemeNames()
 
   const isDark = useDark({ attribute: 'theme', valueDark: 'dark', valueLight: 'light' })
@@ -14,7 +13,7 @@ export function useTheme() {
   const nextThemeName = computed(() => isDark.value ? 'light' : 'dark')
   const setTheme = (theme: typeof possibleThemes[number]) => themeName.value = theme
 
-  const themeUI = __useThemeCode(appColors, computed(() => themeName.value))
+  const themeUI = __useThemeCode(currentColors)
 
   return { toggleTheme, setTheme, themeName, nextThemeName, themeUI }
 }
