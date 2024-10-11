@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-full flex flex-col">
-    <div class="w-full flex justify-center items-center font-semibold text-4xl mt-5 mb-7">Theme Genarator</div>
+    <!-- <div class="w-full flex justify-center items-center font-semibold text-4xl mt-5 mb-7">Theme Genarator</div>
     <div style="height: calc(100vh - 6.5rem);" id="themes-panel" class="grid grid-cols-10 gap-4 px-4">
       <n-card class="col-span-3 shadow-md">
         <template #header>
@@ -48,7 +48,7 @@
           </n-tab-pane>
         </n-tabs>
       </n-card>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -61,48 +61,46 @@
   import { capitalize } from '../utils/pure'
   import CInput from '../components/CInput.vue'
 
-  console.log(useAppColors('light'));
+  // const dialog = useDialog()
+  // const { themeName, setTheme } = useTheme()
+  // const appColors = useAppColors()
+  // const baseColors = [ 'background', 'text', 'main-brand', 'success', 'danger', 'warning', ]
+  // const editingTheme = ref('')
+  // const bcTheme = reactive({})
+  // const testInput = reactive({ aa: 18 })
 
-  const dialog = useDialog()
-  const { themeName, setTheme } = useTheme()
-  const appColors = useAppColors()
-  const baseColors = [ 'background', 'text', 'main-brand', 'success', 'danger', 'warning', ]
-  const editingTheme = ref('')
-  const bcTheme = reactive({})
-  const testInput = reactive({ aa: 18 })
+  // const existingThemes = reactive<Record<string, Record<string, string>>>({})
+  // Object.entries(appColors).forEach(([key, value]) => (existingThemes[key.split('-')[0]] ??= {})[key] = value)
 
-  const existingThemes = reactive<Record<string, Record<string, string>>>({})
-  Object.entries(appColors).forEach(([key, value]) => (existingThemes[key.split('-')[0]] ??= {})[key] = value)
+  // const filteredThemes = computed(() => Object.fromEntries(Object.entries(existingThemes).filter(([k]) => k === (editingTheme.value ? editingTheme.value : k))))
 
-  const filteredThemes = computed(() => Object.fromEntries(Object.entries(existingThemes).filter(([k]) => k === (editingTheme.value ? editingTheme.value : k))))
+  // function createTheme() {
+  //   const newTheme = `new${Object.keys(existingThemes).length}`
+  //   existingThemes[newTheme] = Object.assign({}, Object.fromEntries(Object.entries(existingThemes[Object.keys(existingThemes)[0]]).map(([k, v]) => [`${newTheme}-` + k.split('-').slice(1).join('-'), v])))
+  // }
 
-  function createTheme() {
-    const newTheme = `new${Object.keys(existingThemes).length}`
-    existingThemes[newTheme] = Object.assign({}, Object.fromEntries(Object.entries(existingThemes[Object.keys(existingThemes)[0]]).map(([k, v]) => [`${newTheme}-` + k.split('-').slice(1).join('-'), v])))
-  }
+  // function editTheme(theme: string) {
+  //   editingTheme.value = theme
+  //   Object.assign(bcTheme, { ...existingThemes[theme] })
+  // }
 
-  function editTheme(theme: string) {
-    editingTheme.value = theme
-    Object.assign(bcTheme, { ...existingThemes[theme] })
-  }
+  // function declineThemeEditing() {
+  //   dialog.warning({
+  //     title: 'Confirm',
+  //     content: 'Are you sure?',
+  //     positiveText: 'Sure',
+  //     negativeText: 'Not Sure',
+  //     onPositiveClick: () => {
+  //       existingThemes[editingTheme.value] = bcTheme
+  //       Object.assign(bcTheme, {})
+  //       editingTheme.value = ''
+  //     }
+  //   })
+  // }
 
-  function declineThemeEditing() {
-    dialog.warning({
-      title: 'Confirm',
-      content: 'Are you sure?',
-      positiveText: 'Sure',
-      negativeText: 'Not Sure',
-      onPositiveClick: () => {
-        existingThemes[editingTheme.value] = bcTheme
-        Object.assign(bcTheme, {})
-        editingTheme.value = ''
-      }
-    })
-  }
-
-  function saveThemeEditing() {
-    editingTheme.value = ''
-  }
+  // function saveThemeEditing() {
+  //   editingTheme.value = ''
+  // }
 
 </script>
 

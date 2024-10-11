@@ -94,12 +94,11 @@ export function createGenerableComposables(location: string) {
     export type AppColors = {${Object.keys(colors[themes[0]]).map((k: string) => `'${k}': string`).join(',')}}
 
     export function useAppColors(): Record<'currentColors'|${themes.map(x => `'${x}'`).join('|')}, AppColors> {
-      const themeName = document.querySelector('html')!.getAttribute('theme') || 'light'
       const colors = ${JSON.stringify(colors)}
 
       return {
         //@ts-expect-error
-        currentColors: colors[themeName] as AppColors,
+        currentColors: computed<AppColors>(x => colors[useColorMode().value]),
         ${themes.map(t => `${t}: colors['${t}']`).join(', ')}
       }
     }
