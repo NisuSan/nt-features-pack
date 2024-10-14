@@ -9,18 +9,22 @@
       const theme = useColorMode()
       return {
         //@ts-expect-error
-        currentColors: computed<AppColors>(x => colors[theme.value]),
+        currentColors: computed<AppColors>(x => colors[theme.value] || colors['dark']),
         light: colors['light'], dark: colors['dark']
       }
     }
 
     export function useColorChooser() {
       const theme = useColorMode()
+      // @ts-expect-error
+      const isStable = useThemeNames().includes(theme.value)
+
       const colors = useAppColors()
       return ((lightColor: keyof AppColors,darkColor: keyof AppColors) => computed<string>(() => {
         const l = {'light': lightColor,'dark': darkColor}
+        const t = isStable ? theme.value : 'dark'
         //@ts-expect-error
-        return colors[theme.value][l[theme.value]] || l[theme.value]
+        return colors[t][l[t]] || l[t]
       })) as {
         (lightColor: keyof AppColors,darkColor: keyof AppColors): ComputedRef<string>,
         (lightColor: string,darkColor: string): ComputedRef<string>,
@@ -34,4 +38,3 @@
     export function __useThemeCode(appColors: ComputedRef<AppColors>) {
       return naiveUiOverrides(appColors)
     }
-  

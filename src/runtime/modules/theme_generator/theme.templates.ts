@@ -103,13 +103,16 @@ export function createGenerableComposables(location: string, [path, fn]: [string
       const theme = useColorMode()
       return {
         //@ts-expect-error
-        currentColors: computed<AppColors>(x => colors[theme.value]),
+        currentColors: computed<AppColors>(x => colors[theme.value] || colors.dark),
         ${themes.map(t => `${t}: colors['${t}']`).join(', ')}
       }
     }
 
     export function useColorChooser() {
       const theme = useColorMode()
+      // @ts-expect-error
+      const isStable = useThemeNames().includes(theme.value)
+
       const colors = useAppColors()
       return ((${themes.map(t => `${t}Color: keyof AppColors`).join(',')}) => computed<string>(() => {
         const l = {${themes.map(t => `'${t}': ${t}Color`).join(',')}}

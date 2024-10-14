@@ -13,13 +13,13 @@
             <span>
               <span v-if="theme === themeName" :class="editingTheme === theme ? `text-warning hover:text-warning-hover` : `text-text hover:text-main-brand`" class="cursor-pointer" @click="editTheme(theme as string)">{{ editingTheme === theme ? 'In edit' : 'Edit' }}</span>
               <n-divider v-if="theme === themeName" vertical />
-              <span :class="theme === themeName ? `text-main-brand hover:text-main-brand-hover` : `text-text hover:text-main-brand`" class="cursor-pointer" @click="setTheme(theme as any)">{{ theme === themeName ? 'Active' : 'Activate' }}</span>
+              <span :class="theme === themeName ? `text-main-brand hover:text-main-brand-hover` : `text-text hover:text-main-brand`" class="cursor-pointer" @click="setTheme(theme as string)">{{ theme === themeName ? 'Active' : 'Activate' }}</span>
             </span>
             </span>
           <div :class="`flex flex-row max-w-full mx-2 mb-4 border border-border rounded p-3 `">
             <n-scrollbar content-class="flex items-center" x-scrollable trigger="none">
               <div class="flex flex-col justify-center items-center mb-4" v-for="(c, index) in baseColors" :key="index">
-                <div :style="{ 'background-color': colors[c] }" :class="`flex justify-center items-center w-20 h-16 rounded-md shadow-harder mx-3`"></div>
+                <div :style="{'background-color': colors[c] }" :class="`flex justify-center items-center w-20 h-16 rounded-md shadow-harder mx-3`"></div>
                 <span class="inline-block mt-1">{{ c }}</span>
               </div>
             </n-scrollbar>
@@ -63,12 +63,12 @@
 
   const dialog = useDialog()
   const { themeName, setTheme } = useTheme()
-  const existingThemes = Object.fromEntries(Object.entries(useAppColors()).filter(([k]) => k !== 'currentColors'))
+  const existingThemes = reactive(Object.fromEntries(Object.entries(useAppColors()).filter(([k]) => k !== 'currentColors')))
   const baseColors = [ 'background', 'text', 'main-brand', 'success', 'danger', 'warning', ]
   const editingTheme = ref('')
   const bcTheme = reactive({})
   const testInput = reactive({ aa: 18 })
-  const filteredThemes = computed(() => Object.fromEntries(Object.entries(existingThemes).filter(([k]) => k === (editingTheme.value ? editingTheme.value : k))))
+  const filteredThemes = computed(() => Object.fromEntries(Object.entries(existingThemes).filter(([k]) => k === (editingTheme.value || k))))
 
   function createTheme() {
     const newTheme = `new${Object.keys(existingThemes).length}`
