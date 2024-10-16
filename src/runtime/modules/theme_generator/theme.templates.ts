@@ -34,6 +34,7 @@ export const defaultColorShema = {
     'disabled-border': '#D1D1D1',
     'placeholder': '#B0B0B0',
     'placeholder-disabled': '#9d9d9d',
+    'translucent': 'rgba(0, 0, 0, 0.05)'
   },
   dark: {
     'background': '#1C1C1E',
@@ -64,6 +65,7 @@ export const defaultColorShema = {
     'disabled-border': '#3D3D3F',
     'placeholder': '#7A7A7C',
     'placeholder-disabled': '#58585a',
+    'translucent': 'rgba(255, 255, 255, 0.05)'
   }
 }
 
@@ -116,8 +118,9 @@ export function createGenerableComposables(location: string, [path, fn]: [string
       const colors = useAppColors()
       return ((${themes.map(t => `${t}Color: keyof AppColors`).join(',')}) => computed<string>(() => {
         const l = {${themes.map(t => `'${t}': ${t}Color`).join(',')}}
+        const t = computed(() => isStable ? theme.value : 'dark')
         //@ts-expect-error
-        return colors[theme.value][l[theme.value]] || l[theme.value]
+        return colors[t.value][l[t.value]] || l[t.value]
       })) as {
         (${themes.map(t => `${t}Color: keyof AppColors`).join(',')}): ComputedRef<string>,
         (${themes.map(t => `${t}Color: string`).join(',')}): ComputedRef<string>,

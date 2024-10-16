@@ -9,7 +9,7 @@
       const theme = useColorMode()
       return {
         //@ts-expect-error
-        currentColors: computed<AppColors>(x => colors[theme.value] || colors['dark']),
+        currentColors: computed<AppColors>(x => colors[theme.value] || colors.dark),
         light: colors['light'], dark: colors['dark']
       }
     }
@@ -22,9 +22,10 @@
       const colors = useAppColors()
       return ((lightColor: keyof AppColors,darkColor: keyof AppColors) => computed<string>(() => {
         const l = {'light': lightColor,'dark': darkColor}
-        const t = isStable ? theme.value : 'dark'
+        const t = computed(() => isStable ? theme.value : 'dark')
+
         //@ts-expect-error
-        return colors[t][l[t]] || l[t]
+        return colors[t.value][l[t.value]] || l[t.value]
       })) as {
         (lightColor: keyof AppColors,darkColor: keyof AppColors): ComputedRef<string>,
         (lightColor: string,darkColor: string): ComputedRef<string>,
