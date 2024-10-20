@@ -54,7 +54,7 @@ html {
 
 @include themed('.n-button.n-button--tertiary-type', 'light') {
   .n-button__border {
-    border: 1px solid #E0E0E0 !important;
+    border: 1px solid theme('colors.disabled-background') !important;
   }
 
   .n-button__state-border {
@@ -62,7 +62,7 @@ html {
   }
 
   &:not(.n-button--disabled):hover {
-    background: #E0E0E0 !important;
+    background: theme('colors.disabled-background') !important;
     .n-button__state-border {
       border: none !important;
     }
@@ -103,7 +103,7 @@ $buttons: ('default': 'main-brand', 'primary': 'main-brand', 'info': 'info', 'su
   @each $btn, $n in $buttons {
     [theme=#{$t}] .n-button.n-button--#{$btn}-type.n-button--dashed:active {
       color: theme('colors.#{$n}-hover') !important;
-      background-color: if($t == 'light', rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05)) !important;
+      background-color: theme('colors.translucent') !important;
 
       .n-button__state-border {
         border-width: 1px !important;

@@ -27,6 +27,7 @@
   --disabled-border: #D1D1D1;
   --placeholder: #B0B0B0;
   --placeholder-disabled: #9d9d9d;
+  --translucent: rgba(0, 0, 0, 0.05);
 }
 [theme='dark'] {
   --background: #1C1C1E;
@@ -57,4 +58,5 @@
   --disabled-border: #3D3D3F;
   --placeholder: #7A7A7C;
   --placeholder-disabled: #58585a;
+  --translucent: rgba(255, 255, 255, 0.05);
 }

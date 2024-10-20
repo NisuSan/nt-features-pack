@@ -54,7 +54,7 @@ $buttons: ('default': 'main-brand', 'primary': 'main-brand', 'info': 'info', 'su
   @each $btn, $n in $buttons {
     [theme=#{$t}] .n-button.n-button--#{$btn}-type.n-button--dashed:active {
       color: theme('colors.#{$n}-hover') !important;
-      background-color: if($t == 'light', rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05)) !important;
+      background-color: theme('colors.translucent') !important;
 
       .n-button__state-border {
         border-width: 1px !important;

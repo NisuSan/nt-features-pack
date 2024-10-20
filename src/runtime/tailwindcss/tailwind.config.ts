@@ -48,6 +48,7 @@ export default <Partial<Config>> {
         'disabled-border': 'var(--disabled-border)',
         'placeholder': 'var(--placeholder)',
         'placeholder-disabled': 'var(--placeholder-disabled)',
+        'translucent': 'var(--translucent)',
       }
     }
   },
