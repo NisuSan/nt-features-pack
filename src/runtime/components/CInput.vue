@@ -21,7 +21,7 @@
     type?: 'text' | 'number' | 'checkbox' | 'dropdown' | 'date' | 'datetime',
     autosize?: boolean,
     disabled?: boolean,
-    validation?: 'text' | 'text-cyrillic' | 'number' | 'number-positive' | Joi.Schema,
+    validation?: 'text' | 'text-cyrillic' | 'text-latin' | 'number' | 'number-positive' | Joi.Schema,
     required?: boolean,
     multiple?: boolean,
     placeholder?: string
@@ -46,7 +46,7 @@
 
   let tippy: any = undefined
 
-  onMounted(() => { if(isTouched.value && (props.type === 'text' || props.type === 'number')) {
+  onMounted(() => { if(props.type === 'text' || props.type === 'number') {
     tippy = useTippy(element.value.inputElRef, { theme: 'error' })
 
     if(props.validation) {
@@ -63,6 +63,9 @@
       }
       else if (props.validation === 'text-cyrillic') {
         schema = Joi.string().regex(/^[\u0400-\u04FF\s'"]+$/)
+      }
+      else if (props.validation === 'text-latin') {
+        schema = Joi.string().regex(/^[A-Za-z]+$/)
       }
       else {
         schema = props.validation

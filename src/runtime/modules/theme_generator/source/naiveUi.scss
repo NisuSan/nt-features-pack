@@ -62,3 +62,5 @@ $buttons: ('default': 'main-brand', 'primary': 'main-brand', 'info': 'info', 'su
     }
   }
 }
+
+@include createTippyTheme('error', theme('colors.danger'), theme('colors.text'));

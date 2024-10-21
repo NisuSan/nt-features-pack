@@ -1,5 +1,6 @@
 import { defineNuxtModule, installModule, extendPages, addImportsDir, addComponent, addComponentsDir, addPlugin } from '@nuxt/kit'
 import { type ModuleOptions as TailwindModuleOptions } from '@nuxtjs/tailwindcss'
+import { defu } from 'defu'
 import { resolve } from './runtime/utils/index.ts'
 
 export interface ModuleOptions {
@@ -25,6 +26,9 @@ export interface ModuleOptions {
     disable?: boolean,
     provider?: 'css' | 'tailwind',
     css?: string
+  },
+  joi: {
+    messages?: Record<string, string | ((x: string) => string)>
   }
 }
 
@@ -63,6 +67,11 @@ export default defineNuxtModule<ModuleOptions>({
     }
   },
   async setup(_options, _nuxt) {
+    // @ts-expect-error
+    _nuxt.options.runtimeConfig.public.ntFeaturesPack = defu(_nuxt.options.runtimeConfig.public.ntFeaturesPack, {
+      joi: _options.joi
+    })
+
     if(!_options.apiGenerator.disable) {
       installModule(resolve('./runtime/modules/api_generator/index.ts'), {..._options.apiGenerator, isThemeGeneratorActive: !_options.themeGenerator.disable}).then(x => {})
     }
@@ -92,8 +101,10 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     await installModule('@vueuse/nuxt')
+
     addImportsDir(resolve('./runtime/composables'))
     addComponentsDir({ path: resolve('./runtime/components') })
     addPlugin(resolve('./runtime/plugins/tippy.ts'))
   },
 })
+
