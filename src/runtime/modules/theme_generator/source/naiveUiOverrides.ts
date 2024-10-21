@@ -101,8 +101,11 @@ export function naiveUiOverrides(appColors: ComputedRef<AppColors>) {
       tabTextColorBar: appColors.value['text'],
     },
     Dialog: {
+      titleFontSize: '1rem',
       titleTextColor: appColors.value['text'],
       textColor: appColors.value['text'],
-    }
+      color: appColors.value['modal-background'],
+      iconMargin: '0 7px 0 0',
+    },
   }))
 }

@@ -26,17 +26,24 @@
           </div>
         </div>
         <div v-if="editingTheme">
-           <c-input v-model.number="testInput.aa" type="text" validation="text" />
+
         </div>
         <n-float-button v-if="editingTheme" position="absolute" left="14px" bottom="14px" type="primary" @click="declineThemeEditing()">
           <span class="icon-[pepicons-pop--arrow-spin]"></span>
         </n-float-button>
-        <n-float-button v-if="!editingTheme" position="absolute" right="14px" bottom="14px" type="primary" @click="createTheme()">
+        <n-float-button v-if="!editingTheme" position="absolute" right="14px" bottom="14px" type="primary" @click="showModalThemeName = true">
           <span class="icon-[pepicons-pop--plus]"></span>
         </n-float-button>
         <n-float-button v-else position="absolute" right="14px" bottom="14px" type="primary" @click="saveThemeEditing()">
           <span class="icon-[pepicons-pop--floppy-disk]"></span>
         </n-float-button>
+
+        <n-modal v-model:show="showModalThemeName" preset="dialog" title="Set the new theme name">
+          <div class="flex justify-between items-center mt-3">
+            <c-input v-model="newThemeName" type="text" validation="text" placeholder="Theme name"/>
+            <n-button type="primary" :disabled="!newThemeName" @click="createTheme()">Set</n-button>
+          </div>
+        </n-modal>
       </n-card>
       <n-card class="col-span-7 shadow-md" title="Preview">
         <n-tabs class="card-tabs" default-value="elements" size="medium" animated>
@@ -65,14 +72,14 @@
   const { themeName, setTheme } = useTheme()
   const existingThemes = reactive(Object.fromEntries(Object.entries(useAppColors()).filter(([k]) => k !== 'currentColors')))
   const baseColors = [ 'background', 'text', 'main-brand', 'success', 'danger', 'warning', ]
+  const showModalThemeName = ref(false)
+  const newThemeName = ref('')
   const editingTheme = ref('')
   const bcTheme = reactive({})
-  const testInput = reactive({ aa: 18 })
   const filteredThemes = computed(() => Object.fromEntries(Object.entries(existingThemes).filter(([k]) => k === (editingTheme.value || k))))
 
   function createTheme() {
-    const newTheme = `new${Object.keys(existingThemes).length}`
-    existingThemes[newTheme] = Object.assign({}, existingThemes['light'])
+    existingThemes[newThemeName.value] = Object.assign({}, existingThemes['light'])
   }
 
   function editTheme(theme: string) {

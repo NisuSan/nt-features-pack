@@ -1,7 +1,7 @@
 <template>
   <div :class="{'checkbox-center': props.type === 'checkbox'}">
-    <span v-if="props.title && props.type !== 'checkbox'" class="font-medium inline-block mb-1">{{ props.title }}</span><br v-if="props.autosize"/>
-    <n-input ref="element" :class="{'autosized': props.autosize}" v-if="props.type === 'text' || props.type === 'number'" :autosize="props.autosize" v-model:value="value" type="text" :disabled="props.disabled" :status="validationStatus" @focus="onFocus" @blur="onBlur"/>
+    <span v-if="props.title && props.type !== 'checkbox'" class="font-medium inline-block mb-1">{{ props.title }}</span><br v-if="props.autosize && props.title"/>
+    <n-input ref="element" :class="{'autosized': props.autosize}" v-if="props.type === 'text' || props.type === 'number'" :autosize="props.autosize" v-model:value="value" type="text" :placeholder="props.placeholder" :disabled="props.disabled" :status="validationStatus" @focus="onFocus" @blur="onBlur"/>
     <n-checkbox v-else-if="props.type === 'checkbox'" v-model:checked="checked" :disabled="props.disabled">{{ props.title }}</n-checkbox>
     <n-select :class="{'select-autosize': props.autosize}" v-else-if="props.type === 'dropdown'" v-model:value="value" :options="options" :disabled="props.disabled" :multiple="props.multiple"/>
     <!-- @vue-ignore -->
@@ -23,7 +23,8 @@
     disabled?: boolean,
     validation?: 'text' | 'text-cyrillic' | 'number' | 'number-positive' | Joi.Schema,
     required?: boolean,
-    multiple?: boolean
+    multiple?: boolean,
+    placeholder?: string
   }>(), {
     type: 'text',
     validation: 'text',
@@ -81,7 +82,6 @@
         const result = schema?.validate(n)
         const error = result?.error?.message ?? ''
         console.log(error);
-
 
         if(error) {
           tippy.setContent(error)

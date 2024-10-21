@@ -49,6 +49,7 @@ export default <Partial<Config>> {
         'placeholder': 'var(--placeholder)',
         'placeholder-disabled': 'var(--placeholder-disabled)',
         'translucent': 'var(--translucent)',
+        'modal-background': 'var(--modal-background)',
       }
     }
   },
