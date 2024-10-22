@@ -28,7 +28,10 @@ export interface ModuleOptions {
     css?: string
   },
   joi: {
-    messages?: Record<string, string | ((x: string) => string)>
+    messages?: {
+      base: Record<string, string>,
+      validators: Record<string, Record<string, string>>
+    }
   }
 }
 

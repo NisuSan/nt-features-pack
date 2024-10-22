@@ -40,7 +40,7 @@
 
         <n-modal v-model:show="showModalThemeName" preset="dialog" title="Set the new theme name">
           <div class="flex justify-between items-center mt-3">
-            <c-input v-model="newThemeName" type="text" validation="text" placeholder="Theme name"/>
+            <c-input v-model="newThemeName" type="string" validation="string-latin" placeholder="Theme name"/>
             <n-button type="primary" :disabled="!newThemeName" @click="createTheme()">Set</n-button>
           </div>
         </n-modal>

@@ -1,7 +1,7 @@
 <template>
   <div :class="{'checkbox-center': props.type === 'checkbox'}">
     <span v-if="props.title && props.type !== 'checkbox'" class="font-medium inline-block mb-1">{{ props.title }}</span><br v-if="props.autosize && props.title"/>
-    <n-input ref="element" :class="{'autosized': props.autosize}" v-if="props.type === 'text' || props.type === 'number'" :autosize="props.autosize" v-model:value="value" type="text" :placeholder="props.placeholder" :disabled="props.disabled" :status="validationStatus" @focus="onFocus" @blur="onBlur"/>
+    <n-input ref="element" :class="{'autosized': props.autosize}" v-if="props.type === 'string' || props.type === 'number'" :autosize="props.autosize" v-model:value="value" type="text" :placeholder="props.placeholder" :disabled="props.disabled" :status="validationStatus" @focus="onFocus" @blur="onBlur"/>
     <n-checkbox v-else-if="props.type === 'checkbox'" v-model:checked="checked" :disabled="props.disabled">{{ props.title }}</n-checkbox>
     <n-select :class="{'select-autosize': props.autosize}" v-else-if="props.type === 'dropdown'" v-model:value="value" :options="options" :disabled="props.disabled" :multiple="props.multiple"/>
     <!-- @vue-ignore -->
@@ -12,22 +12,26 @@
 </template>
 
 <script setup lang="ts">
-  import Joi from 'joi'
+  import { useRuntimeConfig } from 'nuxt/app'
   import { onMounted, ref, watch } from 'vue'
   import { useTippy } from 'vue-tippy'
+  import Joi from 'joi'
+
+  console.log(useRuntimeConfig());
+
 
   const props = withDefaults(defineProps<{
     title?: string,
-    type?: 'text' | 'number' | 'checkbox' | 'dropdown' | 'date' | 'datetime',
+    type?: 'string' | 'number' | 'checkbox' | 'dropdown' | 'date' | 'datetime',
     autosize?: boolean,
     disabled?: boolean,
-    validation?: 'text' | 'text-cyrillic' | 'text-latin' | 'number' | 'number-positive' | Joi.Schema,
+    validation?: 'string' | 'string-cyrillic' | 'string-latin' | 'number' | 'number-positive' | Joi.Schema,
     required?: boolean,
     multiple?: boolean,
     placeholder?: string
   }>(), {
-    type: 'text',
-    validation: 'text',
+    type: 'string',
+    validation: 'string',
     autosize: true,
     required: true
   })
@@ -46,7 +50,7 @@
 
   let tippy: any = undefined
 
-  onMounted(() => { if(props.type === 'text' || props.type === 'number') {
+  onMounted(() => { if(props.type === 'string' || props.type === 'number') {
     tippy = useTippy(element.value.inputElRef, { theme: 'error' })
 
     if(props.validation) {
@@ -58,13 +62,13 @@
       else if(props.validation === 'number-positive') {
         schema = Joi.number().positive()
       }
-      else if (props.validation === 'text') {
+      else if (props.validation === 'string') {
         schema = Joi.string().regex(/^[A-Za-z\u0400-\u04FF\s'"]+$/)
       }
-      else if (props.validation === 'text-cyrillic') {
+      else if (props.validation === 'string-cyrillic') {
         schema = Joi.string().regex(/^[\u0400-\u04FF\s'"]+$/)
       }
-      else if (props.validation === 'text-latin') {
+      else if (props.validation === 'string-latin') {
         schema = Joi.string().regex(/^[A-Za-z]+$/)
       }
       else {
@@ -73,18 +77,19 @@
       if(props.required) schema = schema?.required()
 
       if(typeof props.validation !== 'object') {
-        schema = schema.messages({
-          'any.required': 'Це поле є обов\'язковим для заповнення',
-          'string.pattern.base': props.validation === 'text-cyrillic' ? 'Це поле повинно міститити лише кириличні літери, пробіли та апостроф' : 'Це поле повинно містити лише літери, пробіли та апостроф',
-          'number.base': 'Це поле повинно містити лише цифри',
-          'number.positive': 'Це поле повинно містити лише позитивні числа',
-        })
+        // @ts-expect-error
+        const m = useRuntimeConfig().public.ntFeaturesPack?.joi?.messages
+        if(m) {
+          schema = schema.messages({
+            ...m.base,
+            ...m.validators[props.validation]
+          })
+        }
       }
 
       watch(value, n => {
         const result = schema?.validate(n)
         const error = result?.error?.message ?? ''
-        console.log(error);
 
         if(error) {
           tippy.setContent(error)
