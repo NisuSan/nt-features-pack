@@ -18,18 +18,24 @@
             </span>
           <div :class="`flex flex-row max-w-full mx-2 mb-4 border border-border rounded p-3 `">
             <n-scrollbar content-class="flex items-center" x-scrollable trigger="none">
-              <div class="flex flex-col justify-center items-center mb-4" v-for="(c, index) in baseColors" :key="index">
+              <div class="flex flex-col justify-center items-center mb-4" v-for="(c, index) in baseColors" :key="`bc-${index}`">
                 <div :style="{'background-color': colors[c] }" :class="`flex justify-center items-center w-20 h-16 rounded-md shadow-harder mx-3`"></div>
                 <span class="inline-block mt-1">{{ c }}</span>
               </div>
             </n-scrollbar>
           </div>
         </div>
-        <div v-if="editingTheme">
-
+        <div class="p-3 pt-1" v-if="editingTheme">
+          <div class="flex mt-5 last:mb-12" v-for="(c, index) in existingThemes[themeName]" :key="`rc-${index}`">
+            <div class="flex items-center">
+              <div :style="{ 'background-color': c }" class="w-10 h-8 rounded cursor-pointer"></div>
+              <span class="inline-block ml-2">{{ index }}</span>
+              <span>{{ deltaE(appColors.currentColors.value['card-background'], c) }}</span>
+            </div>
+          </div>
         </div>
         <n-float-button v-if="editingTheme" position="absolute" left="14px" bottom="14px" type="primary" @click="declineThemeEditing()">
-          <span class="icon-[pepicons-pop--arrow-spin]"></span>
+          <span class="icon-[pepicons-pop--arrow-left]"></span>
         </n-float-button>
         <n-float-button v-if="!editingTheme" position="absolute" right="14px" bottom="14px" type="primary" @click="showModalThemeName = true">
           <span class="icon-[pepicons-pop--plus]"></span>
@@ -60,26 +66,39 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, reactive, ref } from '#imports'
+  import { type Ref, computed, reactive, ref} from 'vue'
   import { useDialog } from 'naive-ui'
+  import { useStyleTag } from '@vueuse/core/index.mjs'
   import { useTheme } from '../composables'
   import { api } from '../composables/apiComposables'
-  import { useAppColors, type AppColors } from '../composables/generableComposables'
-  import { capitalize } from '../utils/pure'
+  import { useAppColors, useThemeNames, type AppColors } from '../composables/generableComposables'
+  import { capitalize, colorsToCss, deltaE } from '../utils/pure'
   import CInput from '../components/CInput.vue'
 
+  const appColors = useAppColors()
   const dialog = useDialog()
   const { themeName, setTheme } = useTheme()
-  const existingThemes = reactive(Object.fromEntries(Object.entries(useAppColors()).filter(([k]) => k !== 'currentColors')))
-  const baseColors = [ 'background', 'text', 'main-brand', 'success', 'danger', 'warning', ]
+  const existingThemes = reactive(Object.fromEntries(Object.entries(appColors).filter(([k]) => k !== 'currentColors')))
+  const baseColors = [ 'background', 'text', 'main-brand', 'success', 'danger', 'warning' ]
   const showModalThemeName = ref(false)
   const newThemeName = ref('')
   const editingTheme = ref('')
   const bcTheme = reactive({})
+  const newCreatedCss = reactive<Record<string, Ref<string, string>>>({})
   const filteredThemes = computed(() => Object.fromEntries(Object.entries(existingThemes).filter(([k]) => k === (editingTheme.value || k))))
 
+  // @ts-expect-error
+  if(!useThemeNames().includes(themeName.value)) setTheme('dark')
+
   function createTheme() {
-    existingThemes[newThemeName.value] = Object.assign({}, existingThemes['light'])
+    existingThemes[newThemeName.value] = Object.assign({}, existingThemes[themeName.value])
+    // @ts-expect-error
+    const { css } = useStyleTag(colorsToCss(existingThemes[newThemeName.value], newThemeName.value))
+    newCreatedCss[newThemeName.value] = css
+    showModalThemeName.value = false
+
+    setTheme(newThemeName.value)
+    editTheme(newThemeName.value)
   }
 
   function editTheme(theme: string) {
@@ -89,7 +108,7 @@
 
   function declineThemeEditing() {
     dialog.warning({
-      title: 'Confirm',
+      title: 'Confirm your want to discard the changes',
       content: 'Are you sure?',
       positiveText: 'Sure',
       negativeText: 'Not Sure',

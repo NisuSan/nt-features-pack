@@ -13,7 +13,7 @@ export function useTheme() {
   const nextThemeName = computed(() => isDark.value ? 'light' : 'dark')
   const setTheme = ((theme: typeof possibleThemes[number]) => themeName.value = theme ) as {
     (theme: typeof possibleThemes[number]): void,
-    (colors: string): void,
+    (theme: string): void,
   }
 
   const themeUI = __useThemeCode(currentColors)

@@ -106,6 +106,7 @@ export function naiveUiOverrides(appColors: ComputedRef<AppColors>) {
       textColor: appColors.value['text'],
       color: appColors.value['modal-background'],
       iconMargin: '0 7px 0 0',
+      closeIconColorHover: appColors.value['danger-hover'],
     },
   }))
 }

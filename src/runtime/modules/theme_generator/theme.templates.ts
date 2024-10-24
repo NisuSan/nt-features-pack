@@ -3,6 +3,7 @@ import fg from 'fast-glob'
 import { existsSync } from 'node:fs'
 import { Project } from 'ts-morph'
 import { createFile, getRuntimeApiDir, getUrlRouteFromFile, resolve } from '../../utils/index.ts'
+import { colorsToCss } from '../../utils/pure.ts'
 
 export const defaultColorShema = {
   light: {
@@ -78,10 +79,8 @@ export const tailwindFileContent = `
 `
 
 export function buildCssColors(location: string) {
-  return Object.keys(require(resolve(location, 'theme.colors.ts', 'src'))).map(theme => {
-    //@ts-expect-error
-    return `[theme='${theme}'] {\n` + Object.entries(defaultColorShema[theme]).map(([key, value]) => `  --${key}: ${value};`).join('\n') + '\n}'
-  }).join('\n')
+  // @ts-expect-error
+  return Object.keys(require(resolve(location, 'theme.colors.ts', 'src'))).map(theme => colorsToCss(defaultColorShema[theme], theme)).join('\n')
 }
 
 export function createGenerableComposables(location: string, [path, fn]: [string, string]) {
