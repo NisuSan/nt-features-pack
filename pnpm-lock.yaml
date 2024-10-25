@@ -8,28 +8,16 @@ importers:
 
   .:
     dependencies:
-      '@nuxt/kit':
-        specifier: ^3.13.2
-        version: 3.13.2(magicast@0.3.5)(rollup@4.21.3)
-      ansis:
-        specifier: ^3.3.2
-        version: 3.3.2
-      fast-glob:
-        specifier: ^3.3.2
-        version: 3.3.2
       joi:
         specifier: ^17.13.3
         version: 17.13.3
-      rimraf:
-        specifier: ^6.0.1
-        version: 6.0.1
-      ts-morph:
-        specifier: ^24.0.0
-        version: 24.0.0
       vue-tippy:
         specifier: ^6.4.4
         version: 6.4.4(vue@3.5.5(typescript@5.6.2))
     devDependencies:
+      '@cyhnkckali/vue3-color-picker':
+        specifier: ^2.0.2
+        version: 2.0.2(vue@3.5.5(typescript@5.6.2))
       '@iconify-json/pepicons-pop':
         specifier: ^1.2.0
         version: 1.2.0
@@ -42,6 +30,9 @@ importers:
       '@nuxt/eslint-config':
         specifier: ^0.5.7
         version: 0.5.7(eslint@9.12.0(jiti@1.21.6))(typescript@5.6.2)
+      '@nuxt/kit':
+        specifier: ^3.13.2
+        version: 3.13.2(magicast@0.3.5)(rollup@4.21.3)
       '@nuxt/module-builder':
         specifier: ^0.8.4
         version: 0.8.4(@nuxt/kit@3.13.2(magicast@0.3.5)(rollup@4.21.3))(nuxi@3.13.2)(sass@1.79.4)(typescript@5.6.2)(vue-tsc@2.1.6(typescript@5.6.2))
@@ -66,6 +57,9 @@ importers:
       '@vueuse/nuxt':
         specifier: ^11.1.0
         version: 11.1.0(magicast@0.3.5)(nuxt@3.13.2(@parcel/watcher@2.4.1)(@types/node@22.5.5)(eslint@9.12.0(jiti@1.21.6))(ioredis@5.4.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.21.3)(sass-embedded@1.79.4)(sass@1.79.4)(terser@5.32.0)(typescript@5.6.2)(vite@5.4.5(@types/node@22.5.5)(sass-embedded@1.79.4)(sass@1.79.4)(terser@5.32.0))(vue-tsc@2.1.6(typescript@5.6.2)))(rollup@4.21.3)(vue@3.5.5(typescript@5.6.2))
+      ansis:
+        specifier: ^3.3.2
+        version: 3.3.2
       changelogen:
         specifier: ^0.5.7
         version: 0.5.7(magicast@0.3.5)
@@ -75,12 +69,18 @@ importers:
       eslint:
         specifier: ^9.12.0
         version: 9.12.0(jiti@1.21.6)
+      fast-glob:
+        specifier: ^3.3.2
+        version: 3.3.2
       naive-ui:
         specifier: ^2.40.1
         version: 2.40.1(vue@3.5.5(typescript@5.6.2))
       nuxt:
         specifier: ^3.13.2
         version: 3.13.2(@parcel/watcher@2.4.1)(@types/node@22.5.5)(eslint@9.12.0(jiti@1.21.6))(ioredis@5.4.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.21.3)(sass-embedded@1.79.4)(sass@1.79.4)(terser@5.32.0)(typescript@5.6.2)(vite@5.4.5(@types/node@22.5.5)(sass-embedded@1.79.4)(sass@1.79.4)(terser@5.32.0))(vue-tsc@2.1.6(typescript@5.6.2))
+      rimraf:
+        specifier: ^6.0.1
+        version: 6.0.1
       sass:
         specifier: ^1.79.4
         version: 1.79.4
@@ -90,6 +90,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.13
         version: 3.4.13
+      ts-morph:
+        specifier: ^24.0.0
+        version: 24.0.0
       typescript:
         specifier: latest
         version: 5.6.2
@@ -292,6 +295,11 @@ packages:
     engines: {node: ^14 || ^16 || >=18}
     peerDependencies:
       postcss-selector-parser: ^6.0.13
+
+  '@cyhnkckali/vue3-color-picker@2.0.2':
+    resolution: {integrity: sha512-XfmaQ3r3xmPtfWUuO8gEw+oDXW6KjMJaF9xpnRDj3ZEhUTsS9EE2yCF1n7IrYQjk3Rybatvv2TMvFOc8tzdMDg==}
+    peerDependencies:
+      vue: ^3.3.8
 
   '@emotion/hash@0.8.0':
     resolution: {integrity: sha512-kBJtf7PH6aWwZ6fka3zQ0p6SBYzx4fl1LoZXE2RrnYST9Xljm7WfKJrU4g/Xr3Beg72MLrp1AWNUmuYJTL7Cow==}
@@ -5268,6 +5276,10 @@ snapshots:
   '@csstools/selector-specificity@3.1.1(postcss-selector-parser@6.1.2)':
     dependencies:
       postcss-selector-parser: 6.1.2
+
+  '@cyhnkckali/vue3-color-picker@2.0.2(vue@3.5.5(typescript@5.6.2))':
+    dependencies:
+      vue: 3.5.5(typescript@5.6.2)
 
   '@emotion/hash@0.8.0': {}
 

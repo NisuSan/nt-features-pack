@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { readFileSync, existsSync } from 'node:fs'
 import { defineNuxtModule } from '@nuxt/kit'
 import { defu } from 'defu'
 import { defaultColorShema, tailwindFileContent, buildCssColors, createGenerableComposables, generateRuntimeApiRoutes } from './theme.templates.ts'
@@ -24,8 +24,7 @@ export default defineNuxtModule<ModuleOptions>({
   setup(_options, _nuxt) {
     try {
       const rootDir = resolve(_options.location, 'src')
-
-      createFile(resolve(rootDir, 'theme.colors.ts'), `export default ${JSON.stringify(defaultColorShema)}`)
+      const ctsFile = resolve(rootDir, 'theme.colors.ts')
 
       const mixins = (_options.scssMixins![1] === 'apppend'
         ? readFileSync(resolve('../theme_generator/source/mixins.scss'), 'utf-8').toString() + '\n\n'
@@ -37,6 +36,7 @@ export default defineNuxtModule<ModuleOptions>({
               + (!_options.isIconify ? '\n\n' + readFileSync(resolve('../iconify/index.scss'), 'utf-8').toString() : '')
               + (_options.iconifyCss ? '\n\n' + readFileSync(_options.iconifyCss, 'utf-8').toString() : '')
 
+      if(!existsSync(ctsFile)) createFile(ctsFile, `export default ${JSON.stringify(defaultColorShema, null, 2)}`)
       createFile(resolve(rootDir, 'styles.scss', 'src'), mixins + '\n\n' + css)
       createFile(resolve(rootDir, 'theme.colors.css', 'src'), buildCssColors(rootDir))
 

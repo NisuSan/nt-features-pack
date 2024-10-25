@@ -1,8 +1,8 @@
 [theme='light'] {
   --background: #F3F1F2;
-  --card-background: transparent;
-  --input-background: transparent;
-  --modal-background: transparent;
+  --card-background: #F3F1F2;
+  --input-background: #F3F1F2;
+  --modal-background: #F3F1F2;
   --text: #252538;
   --card-text: #252538;
   --main-brand: #6067B1;
@@ -28,7 +28,7 @@
   --disabled-border: #D1D1D1;
   --placeholder: #B0B0B0;
   --placeholder-disabled: #9d9d9d;
-  --translucent: rgba(0, 0, 0, 0.05);
+  --translucent: #0000000d;
 }
 [theme='dark'] {
   --background: #1C1C1E;
@@ -60,5 +60,5 @@
   --disabled-border: #3D3D3F;
   --placeholder: #7A7A7C;
   --placeholder-disabled: #58585a;
-  --translucent: rgba(255, 255, 255, 0.05);
+  --translucent: #ffffff0d;
 }

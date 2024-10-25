@@ -8,9 +8,9 @@ import { colorsToCss } from '../../utils/pure.ts'
 export const defaultColorShema = {
   light: {
     background: '#F3F1F2',
-    'card-background': 'transparent',
-    'input-background': 'transparent',
-    'modal-background': 'transparent',
+    'card-background': '#F3F1F2',
+    'input-background': '#F3F1F2',
+    'modal-background': '#F3F1F2',
     'text': '#252538',
     'card-text': '#252538',
     'main-brand': '#6067B1',
@@ -36,7 +36,7 @@ export const defaultColorShema = {
     'disabled-border': '#D1D1D1',
     'placeholder': '#B0B0B0',
     'placeholder-disabled': '#9d9d9d',
-    'translucent': 'rgba(0, 0, 0, 0.05)'
+    'translucent': '#0000000d'
   },
   dark: {
     'background': '#1C1C1E',
@@ -68,7 +68,7 @@ export const defaultColorShema = {
     'disabled-border': '#3D3D3F',
     'placeholder': '#7A7A7C',
     'placeholder-disabled': '#58585a',
-    'translucent': 'rgba(255, 255, 255, 0.05)'
+    'translucent': '#ffffff0d'
   }
 }
 
@@ -79,8 +79,13 @@ export const tailwindFileContent = `
 `
 
 export function buildCssColors(location: string) {
-  // @ts-expect-error
-  return Object.keys(require(resolve(location, 'theme.colors.ts', 'src'))).map(theme => colorsToCss(defaultColorShema[theme], theme)).join('\n')
+  const colors = require(resolve(location, 'theme.colors.ts', 'src')) as Record<string, Record<string, string>>
+
+  const notHex = Object.values(colors).map(th => Object.entries(th).filter(([k, v])=> !v.trim().startsWith('#'))).flat()
+  if(notHex.length > 0) throw new Error('Theme colors must be hex colors:\n' + notHex.map(c => `  ${c[0]}: ${c[1]}`).join('\n'))
+  findMissingKeys(colors)
+
+  return Object.keys(colors).map(theme => colorsToCss(colors[theme], theme)).join('\n')
 }
 
 export function createGenerableComposables(location: string, [path, fn]: [string, string]) {
@@ -92,8 +97,6 @@ export function createGenerableComposables(location: string, [path, fn]: [string
 
   const themeFunction = file.getFunction(fn)
   if(!themeFunction) throw new Error(`Function ${fn} not found in ${path}`)
-
-  if(findDiffKeys(Object.values(colors)).length > 0) throw new Error('Theme colors are not consistent!')
 
   createFile(resolve('../../composables/generableComposables.ts'), `
     import {type ComputedRef, isRef, computed } from 'vue'
@@ -145,21 +148,13 @@ export function generateRuntimeApiRoutes() {
   }
 }
 
-function findDiffKeys(...objects: object[]): string[] {
-  const diffKeys = new Set<string>()
-  const allKeys = new Set<string>()
+function findMissingKeys(themes: Record<string, Record<string, string>>) {
+  const allKeys = new Set();
+  Object.values(themes).forEach(theme => Object.keys(theme).forEach(key => allKeys.add(key)))
 
-  for (const obj of objects) {
-    for (const key in obj) {
-      allKeys.add(key);
-    }
-  }
-
-  for (const key of allKeys) {
-    if (!objects.every(obj => key in obj)) {
-      diffKeys.add(key)
-    }
-  }
-
-  return Array.from(diffKeys)
+  Object.entries(themes).forEach(([themeName, themeKeys]) => {
+    // @ts-expect-error
+    const missingKeys = [...allKeys].filter((key: string) => !(key in themeKeys))
+    if(missingKeys.length) console.error(`Theme "${themeName}'s" missing keys:`, missingKeys)
+  })
 }
