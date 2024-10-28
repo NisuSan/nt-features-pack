@@ -1,8 +1,10 @@
 <template>
   <div class="flex items-center mb-5 last:mb-0">
-    <div :style="{ 'background-color': model, 'border': `2.5px solid ${ nearColor }` }" class="block w-10 h-8 rounded cursor-pointer" ref="elTarget" @click="show = true"></div>
+    <div v-if="show" class="rounded-full w-1 h-1 bg-warning mr-2"></div>
+    <div :style="{ 'background-color': model, 'border': `2.5px solid ${ nearColor }` }" class="relative w-10 h-8 rounded cursor-pointer" ref="elTarget" @click="show = true">
+      <Vue3ColorPicker v-if="show" v-model="model" type="HEX" mode="solid" input-type="RGB" :show-color-list="false" :show-picker-mode="false" :style="pickerPositionStyle" class="absolute" ref="elPicker" @vue:mounted="onPickerMounted()"/>
+    </div>
     <span class="inline-block ml-2">{{ props.name }}</span>
-    <Vue3ColorPicker v-if="show" v-model="model" type="HEX" mode="solid" input-type="RGB" :show-color-list="false" :show-picker-mode="false" :style="pickerPositionStyle" class="absolute" ref="elPicker" @vue:mounted="onPickerMounted()"/>
   </div>
 </template>
 
@@ -39,10 +41,10 @@
     const pickerRect = elPicker.value.$el.getBoundingClientRect() as DOMRect | undefined
     const targetRect = elTarget.value?.getBoundingClientRect()
 
-    pickerPositionStyle.left = (targetRect?.width || 0) + 30 + 'px'
-    pickerPositionStyle.top = ((targetRect?.y || 0) > (pickerRect?.height || 0)
-      ? (targetRect?.y || 0) - (pickerRect?.height || 0)
-      : (targetRect?.y || 0) + (pickerRect?.height || 0)) + 'px'
+    pickerPositionStyle.left = (targetRect?.width || 0) + 5 + 'px'
+    pickerPositionStyle.top = ((targetRect?.y || 0) >= (pickerRect?.height || 0)
+      ? -(pickerRect?.height || 0) - (targetRect?.height || 0) - 25
+      : (targetRect?.height || 0) + 5) + 'px'
 
   }
 </script>

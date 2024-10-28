@@ -28,7 +28,7 @@
             </div>
           </div>
         </div>
-        <div v-else class="p-3">
+        <div v-else class="p-3 pl-0">
           <c-color-picker v-for="(c, index) in existingThemes[editingTheme]" :key="`rc-${index}`" v-model="existingThemes[editingTheme][index]" :name="index"/>
         </div>
         <n-float-button v-if="editingTheme" position="absolute" right="14px" top="14px" type="primary" @click="declineThemeEditing()">
