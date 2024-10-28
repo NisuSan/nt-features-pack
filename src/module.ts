@@ -60,7 +60,10 @@ export default defineNuxtModule<ModuleOptions>({
         cssPath: [resolve('./runtime/tailwindcss/tailwind.css'), { injectPosition: 'first' }],
         configPath: resolve('./runtime/tailwindcss/tailwind.config.ts'),
         config: {
-          content: [ resolve('./runtime/pages/themes.vue'), ]
+          content: [
+            resolve('./runtime/pages/themes.vue'),
+            resolve('./runtime/components/**/*.vue'),
+          ]
         }
       }
     },
@@ -74,6 +77,10 @@ export default defineNuxtModule<ModuleOptions>({
     _nuxt.options.runtimeConfig.public.ntFeaturesPack = defu(_nuxt.options.runtimeConfig.public.ntFeaturesPack, {
       joi: _options.joi
     })
+
+    addImportsDir(resolve('./runtime/composables'))
+    addPlugin(resolve('./runtime/plugins/tippy.ts'))
+    await addComponentsDir({ path: resolve('./runtime/components') })
 
     if(!_options.apiGenerator.disable) {
       installModule(resolve('./runtime/modules/api_generator/index.ts'), {..._options.apiGenerator, isThemeGeneratorActive: !_options.themeGenerator.disable}).then(x => {})
@@ -104,10 +111,6 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     await installModule('@vueuse/nuxt')
-
-    addImportsDir(resolve('./runtime/composables'))
-    addComponentsDir({ path: resolve('./runtime/components') })
-    addPlugin(resolve('./runtime/plugins/tippy.ts'))
   },
 })
 

@@ -17,9 +17,6 @@
   import { useTippy } from 'vue-tippy'
   import Joi from 'joi'
 
-  console.log(useRuntimeConfig());
-
-
   const props = withDefaults(defineProps<{
     title?: string,
     type?: 'string' | 'number' | 'checkbox' | 'dropdown' | 'date' | 'datetime',

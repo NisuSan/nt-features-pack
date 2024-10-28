@@ -29,12 +29,7 @@
           </div>
         </div>
         <div v-else class="p-3">
-          <div class="flex mb-5 last:mb-0" v-for="(c, index) in appColors.currentColors.value" :key="`rc-${index}`">
-            <div class="flex items-center">
-              <div :style="{ 'background-color': c, 'border': `2.5px solid ${ deltaE(appColors.currentColors.value['card-background'], c) < 20 ? appColors.currentColors.value['card-text'] : 'transparent' }` }" class="w-10 h-8 rounded cursor-pointer"></div>
-              <span class="inline-block ml-2">{{ index }}</span>
-            </div>
-          </div>
+          <c-color-picker v-for="(c, index) in existingThemes[editingTheme]" :key="`rc-${index}`" v-model="existingThemes[editingTheme][index]" :name="index"/>
         </div>
         <n-float-button v-if="editingTheme" position="absolute" right="14px" top="14px" type="primary" @click="declineThemeEditing()">
           <span class="icon-[pepicons-pop--arrow-left]"></span>
@@ -76,6 +71,7 @@
   import { useAppColors, useThemeNames, type AppColors } from '../composables/generableComposables'
   import { capitalize, colorsToCss, deltaE } from '../utils/pure'
   import CInput from '../components/CInput.vue'
+  import CColorPicker from '../components/CColorPicker.vue'
 
   const appColors = useAppColors()
   const dialog = useDialog()
