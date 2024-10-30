@@ -59,12 +59,6 @@ export default defineNuxtModule<ModuleOptions>({
       config: {
         cssPath: [resolve('./runtime/tailwindcss/tailwind.css'), { injectPosition: 'first' }],
         configPath: resolve('./runtime/tailwindcss/tailwind.config.ts'),
-        config: {
-          content: [
-            resolve('./runtime/pages/themes.vue'),
-            resolve('./runtime/components/**/*.vue'),
-          ]
-        }
       }
     },
     iconify: {
@@ -99,7 +93,14 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     if(_options.tailwind?.internal) {
-      installModule('@nuxtjs/tailwindcss', _options.tailwind.config).then(x => {})
+      installModule('@nuxtjs/tailwindcss', defu(_options.tailwind.config, {
+        config: {
+          content: [
+            resolve('./runtime/pages/themes.vue'),
+            resolve('./runtime/components/**/*.vue'),
+          ],
+        }
+      })).then(x => {})
     }
 
     if(!_options.iconify?.disable) {

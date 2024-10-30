@@ -1,6 +1,11 @@
 type QueryArgs = { id: number }
 
 export default defineEventHandler(async event => {
-  console.log(useRuntimeConfig());
-
+ return {
+  a: {},
+  b: {}
+ } as {
+  a: PrismaJson.DistrictInfo
+  b: PrismaJson.BankInfo
+ }
 })

@@ -3,7 +3,7 @@
     import {type Ref, unref, toRaw } from 'vue'
     export type Endpoint = "test1" | "index.get" | "index.post";
     export type APIParams<T> = T extends "api.test1" ? { id: number }:T extends "theme.index.get" ? {}:T extends "theme.index.post" ? { name: string }: never;
-    export type APIOutput<T> = T extends "api.test1" ? void:T extends "theme.index.get" ? Record<string, Record<string, string>>:T extends "theme.index.post" ? { theme: string, }: never;
+    export type APIOutput<T> = T extends "api.test1" ? { a: PrismaJson.DistrictInfo, b: PrismaJson.BankInfo, }:T extends "theme.index.get" ? Record<string, Record<string, string>>:T extends "theme.index.post" ? { theme: string, }: never;
 
     export function api() {
       return {

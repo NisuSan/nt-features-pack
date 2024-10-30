@@ -1,7 +1,7 @@
 
     import {type ComputedRef, isRef, computed } from 'vue'
     import { useColorMode } from '@vueuse/core'
-    import { naiveUiOverrides } from 'C:/Users/Antony/Documents/coding/nt-features-pack/src/runtime/modules/theme_generator/source/naiveUiOverrides.ts'
+    import { naiveUiOverrides } from 'C:/repos/nt-features-pack/src/runtime/modules/theme_generator/source/naiveUiOverrides.ts'
     export type AppColors = {'background': string,'card-background': string,'input-background': string,'modal-background': string,'text': string,'card-text': string,'main-brand': string,'main-brand-hover': string,'light-shades': string,'light-accent': string,'light-accent-hover': string,'dark-accent': string,'dark-accent-hover': string,'dark-shades': string,'default': string,'success': string,'success-hover': string,'warning': string,'warning-hover': string,'danger': string,'danger-hover': string,'info': string,'info-hover': string,'border': string,'disabled-background': string,'disabled-text': string,'disabled-border': string,'placeholder': string,'placeholder-disabled': string,'translucent': string}
 
     export function useAppColors() {
