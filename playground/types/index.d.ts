@@ -1,3 +1,5 @@
+export {}
+
 declare global {
   namespace PrismaJson {
     type BankInfo = { name: string, city: string, address: string, mfo: string, edrpou: string }

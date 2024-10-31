@@ -3,15 +3,16 @@
 import { parse } from 'node:path'
 import { readFileSync } from 'node:fs'
 import fg from 'fast-glob'
-import { ExportAssignment, Project, SyntaxKind, type ArrowFunction } from 'ts-morph'
+import { ExportAssignment, Project, SyntaxKind, type ArrowFunction, type Type } from 'ts-morph'
 import { getRuntimeApiDir, getUrlRouteFromFile, log, resolve } from '../../utils/index.ts'
 import { capitalize } from '../../utils/pure.ts'
 
-const tsProject = new Project({ tsConfigFilePath: 'tsconfig.json' })
+const tsProject = new Project({ tsConfigFilePath: resolve('../../tsconfig.json', 'build') })
 
 type CustomApiTypes = {
   file: string,
-  args: string
+  args: string,
+  defaults: string,
   result: string
 }
 
@@ -36,6 +37,8 @@ export function composableApiTemplate(options: Options) {
 
   let compiledOutputTypes = customTypes.map(x => x.result).join(':')
   compiledOutputTypes = compiledOutputTypes + (compiledOutputTypes ? ': never' : 'undefined')
+
+  const compiledDefaults = `{${customTypes.map(x => x.defaults).join(',')}}`
 
   let definedManualRoutes: string | string[] = customApis.map(x => `"${parse(x).name}"`)
   definedManualRoutes = definedManualRoutes.length > 0 ? definedManualRoutes.join(' | ') : 'undefined'
@@ -72,6 +75,7 @@ export function composableApiTemplate(options: Options) {
     export type Endpoint = ${definedManualRoutes};
     export type APIParams<T> = ${compiledInputTypes};
     export type APIOutput<T> = ${compiledOutputTypes};
+    export const defaults = ${compiledDefaults};
 
     export function ${options.functionName}() {
       return {
@@ -109,18 +113,19 @@ function extractCustomApiTypes(file: string): CustomApiTypes {
   const matchArgs = content.match(/type\s?QueryArgs\s?=\s?({[^}]*}|[^{;\n]+)/)
   const argsType = matchArgs ? matchArgs[1].replaceAll('\r\n', '').replaceAll('{', '{ ').replaceAll('}', ' }').replaceAll(/ +/g, ' ') : '{}'
 
-  const resultType = getResultTypeFromAPI(file) || '{}'
+  const resultType = getResultTypeFromAPI(file) || { t: '{}', defaultValue: '{}' }
   const parsed = parse(file)
   const group = parsed.dir.split('/').reverse()[0]
 
   return {
     file,
     args: `T extends "${group}.${parsed.name}" ? ${argsType}`,
-    result: `T extends "${group}.${parsed.name}" ? ${resultType}`
+    defaults: `'${group}.${parsed.name}': ${resultType.defaultValue}`,
+    result: `T extends "${group}.${parsed.name}" ? ${resultType.t}`
   }
 }
 
-function getResultTypeFromAPI(file: string): string | undefined {
+function getResultTypeFromAPI(file: string): { t: string, defaultValue: string } | undefined {
   const sourceFile = tsProject.addSourceFileAtPath(file)
 
   const arrowFunction = sourceFile.getExportAssignment((exp: ExportAssignment) => {
@@ -134,8 +139,31 @@ function getResultTypeFromAPI(file: string): string | undefined {
   if (!arrowFunction) return undefined
   const arrowFunctionSourceFile = arrowFunction.getSourceFile()
 
-  return arrowFunction.getReturnType().getProperties()
-    .filter(x => x.getName() === 'finally')
-    .map(x => x.getTypeAtLocation(arrowFunctionSourceFile).getCallSignatures()[0].getReturnType().getTypeArguments()[0].getText())[0]
-    .replaceAll(';', ',')
+  const f = arrowFunction.getReturnType().getProperties().filter(x => x.getName() === 'finally')[0]
+  const typeArgs = f.getTypeAtLocation(arrowFunctionSourceFile).getCallSignatures()[0].getReturnType().getTypeArguments()[0]
+
+  return {
+    t: typeArgs.getText(),
+    defaultValue: createDefaultvalue(typeArgs)
+  }
 }
+
+function createDefaultvalue(type?: Type): string {
+  if(!type) return 'undefined'
+
+  type = type.getNonNullableType()
+  if(type.isString()) return '\'\''
+  if(type.isNumber()) return '0'
+  if(type.isBoolean()) return 'false'
+  if(type.isArray()) return '[]'
+  if(type.isObject()) {
+    const props = type.getSymbol()?.getDeclarations()[0].getType().getProperties()
+    if(props) {
+      return `{${props.map(x => `${x.getName()}: ${createDefaultvalue(x.getValueDeclaration()?.getType())}`).join(',')}}`
+    }
+  }
+
+  return 'undefined'
+}
+
+
