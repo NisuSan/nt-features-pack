@@ -55,9 +55,9 @@ export function composableApiTemplate(options: Options) {
     return {
       group,
       method: `
-        ${fnName}<T = '${group}.${parsed.name}'>(params?: Ref<APIParams<T>> | APIParams<T>, options?: Omit<UseFetchOptions<APIOutput<T>>, 'default' | 'query' | 'body' | 'params'> & { default?: () => APIOutput<T> | Ref<APIOutput<T>>, withCache?: boolean | number }) {
+        ${fnName}<T = '${group}.${parsed.name}'>(params?: Ref<APIParams<T>> | APIParams<T>, options?: Omit<UseFetchOptions<APIOutput<T>>, 'default' | 'query' | 'body' | 'params'> & { defaultData?: APIOutput<T>, withCache?: boolean | number }) {
           // @ts-expect-error
-          return useExtendedFetch<APIOutput<T>>(\`${route}\`, '${parts[1] || 'get'}', params, options) as AsyncData<APIOutput<T>, Error>
+          return useExtendedFetch<APIOutput<T>>(\`${route}\`, '${parts[1] || 'get'}', params, {...options, default: dfBuilder('${group}.${parsed.name}', options?.defaultData) }) as AsyncData<APIOutput<T>, Error>
         }
       `,
     }
@@ -77,6 +77,12 @@ export function composableApiTemplate(options: Options) {
     export type APIOutput<T> = ${compiledOutputTypes};
     export const defaults = ${compiledDefaults};
 
+    const dfBuilder = (n: string, d: unknown) => () => Array.isArray(defaults[n])
+      ? d || defaults[n]
+      : typeof defaults[n] === 'object'
+        ? { ...defaults[n], ...d }
+        : d || defaults[n]
+
     export function ${options.functionName}() {
       return {
         ${apiFunctions}
@@ -87,7 +93,7 @@ export function composableApiTemplate(options: Options) {
       url: string,
       method: string = 'get',
       params?: Ref<APIParams<T>> | APIParams<T>,
-      options?: Omit<UseFetchOptions<APIOutput<T>>, 'default' | 'query' | 'body' | 'params'> & { default?: () => APIOutput<T> | Ref<APIOutput<T>>, withCache?: boolean | number }
+      options?: Omit<UseFetchOptions<APIOutput<T>>, 'default' | 'query' | 'body' | 'params'> & { default?: () => APIOutput<T>, withCache?: boolean | number }
     ) {
       const isHasArray = Object.values(unref(params) || {}).some(value => Array.isArray(value))
       // @ts-expect-error

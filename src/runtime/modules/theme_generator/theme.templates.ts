@@ -88,20 +88,13 @@ export function buildCssColors(location: string) {
   return Object.keys(colors).map(theme => colorsToCss(colors[theme], theme)).join('\n')
 }
 
-export function createGenerableComposables(location: string, [path, fn]: [string, string]) {
+export function createGenerableComposables(location: string) {
   const colors = require(resolve(location, 'theme.colors.ts', 'src'))
   const themes = Object.keys(colors)
-
-  if(!existsSync(path)) throw new Error(`Path ${path} does not exist`)
-  const file = new Project().addSourceFileAtPath(path)
-
-  const themeFunction = file.getFunction(fn)
-  if(!themeFunction) throw new Error(`Function ${fn} not found in ${path}`)
 
   createFile(resolve('../../composables/generableComposables.ts'), `
     import {type ComputedRef, isRef, computed } from 'vue'
     import { useColorMode } from '@vueuse/core'
-    import { ${fn} } from '${path}'
     export type AppColors = {${Object.keys(colors[themes[0]]).map((k: string) => `'${k}': string`).join(',')}}
 
     export function useAppColors() {
@@ -133,10 +126,6 @@ export function createGenerableComposables(location: string, [path, fn]: [string
 
     export function useThemeNames() {
       return ${JSON.stringify(themes)} as const
-    }
-
-    export function __useThemeCode(appColors: ComputedRef<AppColors>) {
-      return ${fn}(appColors)
     }
   `)
 }

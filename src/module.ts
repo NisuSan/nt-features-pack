@@ -15,7 +15,6 @@ export interface ModuleOptions {
     location?: string,
     scssMixins?: [string[], 'apppend' | 'replace'],
     themeCss?: [string[], 'apppend' | 'replace'],
-    themeCode?: [string, string],
     tailwindUtilsExtension?: string
   },
   tailwind?: {
@@ -51,8 +50,7 @@ export default defineNuxtModule<ModuleOptions>({
       location: './theme',
       target: 'naive-ui',
       scssMixins: [[], 'apppend'],
-      themeCss: [[], 'apppend'],
-      themeCode: [resolve('./runtime/modules/theme_generator/source/naiveUiOverrides.ts'), 'naiveUiOverrides'],
+      themeCss: [[], 'apppend']
     },
     tailwind: {
       internal: true,

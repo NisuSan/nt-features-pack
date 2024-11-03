@@ -79,6 +79,10 @@
         if(m) {
           schema = schema.messages({
             ...m.base,
+            ... {
+              'string-cyrillic': { 'string.pattern.base': 'This field should contain only Cyrillic letters, spaces, and apostrophes' },
+              'string-latin': { 'string.pattern.base': 'This field should contain only Latin letters and spaces' },
+            },
             ...m.validators[props.validation]
           })
         }

@@ -1,9 +1,10 @@
-import { useAppColors, useThemeNames, __useThemeCode } from './generableComposables.ts'
+import { useThemeNames } from './generableComposables.ts'
 import { useColorMode, useDark, useToggle } from '@vueuse/core'
-import { type ComputedRef, computed } from 'vue'
+import type { GlobalThemeOverrides } from 'naive-ui'
+import { computed } from 'vue'
+import { naiveUiOverrides } from '../modules/theme_generator/source/naiveUiOverrides.ts'
 
-export function useTheme() {
-  const { currentColors } = useAppColors()
+export function useTheme(componentsStyle: GlobalThemeOverrides = {}) {
   const possibleThemes = useThemeNames()
 
   const isDark = useDark({ attribute: 'theme', valueDark: 'dark', valueLight: 'light' })
@@ -16,7 +17,7 @@ export function useTheme() {
     (theme: string): void,
   }
 
-  const themeUI = __useThemeCode(currentColors)
+  const themeUI = naiveUiOverrides(componentsStyle)
 
   return { toggleTheme, setTheme, themeName, nextThemeName, themeUI }
 }

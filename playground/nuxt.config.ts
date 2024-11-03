@@ -27,19 +27,7 @@ export default defineNuxtConfig({
   },
   modules: ['../src/module'],
   ntFeaturesPack: {
-    joi: { messages: {
-      base: {
-        'any.required': 'Це поле є обов\'язковим для заповнення',
-        'string.pattern.base': 'Це поле повинно містити лише літери, пробіли та апостроф',
-        'string.empty': 'Це поле є обов\'язковим для заповнення',
-        'number.base': 'Це поле повинно містити лише цифри',
-        'number.positive': 'Це поле повинно містити лише числа більше за нуль',
-      },
-      validators: {
-        'string-cyrillic': { 'string.pattern.base': 'Це поле повинно міститити лише кириличні літери, пробіли та апостроф' },
-        'string-latin': { 'string.pattern.base': 'Це поле повинно містити лише латинські літери та пробіли' },
-      }
-    }}
+
   },
   devtools: { enabled: true },
   compatibilityDate: '2024-09-13',

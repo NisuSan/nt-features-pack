@@ -7,10 +7,9 @@ import { createFile, resolve } from '../../utils/index.ts'
 export interface ModuleOptions {
   disable: boolean,
   target: 'naive-ui' | 'css',
-  location: 'internal' | 'external',
+  location: string,
   scssMixins: [string[], 'apppend' | 'replace'],
   themeCss: [string[], 'apppend' | 'replace'],
-  themeCode: [string, string],
   tailwindUtilsExtension?: string,
   isIconify?: boolean
   iconifyCss?: string
@@ -44,7 +43,7 @@ export default defineNuxtModule<ModuleOptions>({
         + (_options.tailwindUtilsExtension ? '\n\n' + readFileSync(resolve(_options.tailwindUtilsExtension), 'utf-8').toString() : '')
       createFile(resolve('../../tailwindcss/tailwind.css'), content)
 
-      createGenerableComposables(_options.location, _options.themeCode)
+      createGenerableComposables(_options.location)
 
       if(process.env.NODE_ENV === 'development') {
         generateRuntimeApiRoutes()
